@@ -1,27 +1,58 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/CreateService.css';
 
 const CreateService = () => {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    precio: '$',
-    categoria: '',
-    modalidad: 'presencial',
-    descripcion: ''
-  });
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+
+    const [NewNombre, setNewNombre] = useState('');
+    const [NewPrecio, setNewPrecio] = useState('');
+    const [NewCategoria, setNewCategoria] = useState('');
+    const [NewModalidad, setNewModalidad] = useState('presencial');
+    const [NewDescripcion, setNewDescripcion] = useState('');
+    
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
+
+    const addService = async (e) => {
+      e.preventDefault(); // Previene el refresco de la página
+      let check = validateForm();
+      console.log(check)
+      if (check)  {
+        const newService = {
+          idCreador: 1,
+          Nombre: NewNombre,
+          Precio: NewPrecio,
+          idCategoria: 1,
+          Foto: image.name,
+          Descripcion: NewDescripcion
+        };
+        try {
+          console.log(newService);
+          await axios.post('http://localhost:5432/Servicio', newService);
+          setNewNombre('');
+          setNewPrecio('');
+          setNewCategoria('');
+          setNewModalidad('presencial');
+          setNewDescripcion('')
+          navigate('/horario');
+        } catch (error) {
+          console.error('Error al agregar service:', error);
+        }
+      }
+    };
+    
+  
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setNewModalidad({
+        ...NewModalidad,
+        [name]: value
+      });
+    };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -34,13 +65,13 @@ const CreateService = () => {
   const validateForm = () => {
     let formErrors = {};
 
-    if (!formData.nombre) formErrors.nombre = "El nombre es requerido.";
-    if (!formData.precio || !/^\$\d+(,\d{3})*(\.\d{2})?$/.test(formData.precio)) {
+    if (!NewNombre) formErrors.Nombre = "El Nombre es requerido.";
+    if (!NewPrecio || !/^\d+(,\d{3})*(\.\d{2})?$/.test(NewPrecio)) {
       formErrors.precio = "El precio debe estar en formato de dinero. Ej: $123.45";
     }
-    if (!formData.categoria) formErrors.categoria = "La categoría es requerida.";
-    if (!formData.modalidad) formErrors.modalidad = "La modalidad es requerida.";
-    if (!formData.descripcion) formErrors.descripcion = "La descripción es requerida.";
+    if (!NewCategoria) formErrors.Categoria = "La categoría es requerida.";
+    if (!NewModalidad) formErrors.modalidad = "La modalidad es requerida.";
+    if (!NewDescripcion) formErrors.Descripcion = "La descripción es requerida.";
     if (!image) formErrors.image = "La imagen es requerida.";
 
     setErrors(formErrors);
@@ -48,18 +79,11 @@ const CreateService = () => {
     return Object.keys(formErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log(formData, image);
-      navigate('/horario');
-    }
-  };
 
   return (
     <div className="create-service-container">
       <h1>Crear servicio</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={addService}>
         <div className="form-grid">
           <div className="image-upload">
             <label htmlFor="imageInput">
@@ -71,60 +95,60 @@ const CreateService = () => {
                   <span className="text">Subir imagen</span>
                 </div>
               )}
-              <input type="file" id="imageInput" accept="image/*" onChange={handleImageChange} />
+              <input type="file" id="imageInput"  accept="image/*" onChange={handleImageChange} />
             </label>
             {errors.image && <p className="error-text">{errors.image}</p>}
           </div>
           <div className="form-group description-group">
-            <label htmlFor="descripcion">Descripcion</label>
+            <label htmlFor="Descripcion">Descripcion</label>
             <textarea
-              id="descripcion"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleInputChange}
+              id="Descripcion"
+              name="Descripcion"
+              value={NewDescripcion}
+              onChange={(e) => setNewDescripcion(e.target.value)}
               placeholder="Descripción"
             ></textarea>
-            {errors.descripcion && <p className="error-text">{errors.descripcion}</p>}
+            {errors.Descripcion && <p className="error-text">{errors.Descripcion}</p>}
           </div>
           <div className="form-group">
-            <label htmlFor="nombre">Nombre</label>
+            <label htmlFor="Nombre">Nombre</label>
             <input
               type="text"
-              id="nombre"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleInputChange}
+              id="Nombre"
+              name="Nombre"
+              value={NewNombre}
+              onChange={(e) => setNewNombre(e.target.value)}
               placeholder="Nombre"
             />
-            {errors.nombre && <p className="error-text">{errors.nombre}</p>}
+            {errors.Nombre && <p className="error-text">{errors.Nombre}</p>}
           </div>
           <div className="form-group">
             <label htmlFor="precio">Precio</label>
             <input
-              type="text"
+              type="int"
               id="precio"
               name="precio"
-              value={formData.precio}
-              onChange={handleInputChange}
+              value={NewPrecio}
+              onChange={(e) => setNewPrecio(e.target.value)}
               placeholder="$0.00"
             />
             {errors.precio && <p className="error-text">{errors.precio}</p>}
           </div>
           <div className="form-group">
-            <label htmlFor="categoria">Categoría</label>
+            <label htmlFor="Categoria">Categoría</label>
             <input
               type="text"
-              id="categoria"
-              name="categoria"
-              value={formData.categoria}
-              onChange={handleInputChange}
+              id="Categoria"
+              name="Categoria"
+              value={NewCategoria}
+              onChange={(e) => setNewCategoria(e.target.value)}
               placeholder="Categoría"
             />
-            {errors.categoria && <p className="error-text">{errors.categoria}</p>}
+            {errors.Categoria && <p className="error-text">{errors.Categoria}</p>}
           </div>
           <div className="form-group">
             <label htmlFor="modalidad">Modalidad</label>
-            <select id="modalidad" name="modalidad" value={formData.modalidad} onChange={handleInputChange}>
+            <select id="modalidad" name="modalidad" value={NewModalidad} onChange={handleInputChange}>
               <option value="presencial">Presencial</option>
               <option value="sincronica">Virtual sincrónica</option>
               <option value="asincronica">Virtual asincrónica</option>
