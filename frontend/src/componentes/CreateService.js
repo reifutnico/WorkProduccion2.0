@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/CreateService.css';
 
-const CreateService = () => {
+const CreateService = ({setService}) => {
 
 
     const [NewNombre, setNewNombre] = useState('');
@@ -32,13 +32,14 @@ const CreateService = () => {
         };
         try {
           console.log(newService);
-          await axios.post('http://localhost:5432/Servicio', newService);
+          const idServicio = await axios.post('http://localhost:5432/Servicio', newService);
           setNewNombre('');
           setNewPrecio('');
           setNewCategoria('');
           setNewModalidad('presencial');
           setNewDescripcion('')
-          navigate('/horario');
+          navigate(`/horario?id=${idServicio}`); // Redirige con el ID en la URL
+          setService()
         } catch (error) {
           console.error('Error al agregar service:', error);
         }

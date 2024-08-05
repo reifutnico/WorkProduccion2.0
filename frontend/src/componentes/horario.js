@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import '../css/Horario.css';
+import axios from 'axios';
 
 const Horario = () => {
   const [selectedDay, setSelectedDay] = useState('Lunes');
@@ -8,14 +11,68 @@ const Horario = () => {
   const [shiftDuration, setShiftDuration] = useState('');
   const [timeBetweenShifts, setTimeBetweenShifts] = useState('');
   const [schedule, setSchedule] = useState([]);
+  const [serviceId, setServiceId] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setServiceId(params.get('id')); // Obtén el ID de los parámetros de consulta
+  }, [location.search]);
+
+  const newDisponibilidad = async (e) => {
+    e.preventDefault(); // Previene el refresco de la página
+    let check = validateForm();
+    console.log(check);
+    if (check)  {
+      const Disponibilidades = {
+        Dia: 1,
+        HoraDesde: fromTime,
+        HoraHasta: toTime,
+        DuracionTurno: shiftDuration,
+        Descanso: timeBetweenShifts
+      };
+      try {
+        console.log(Disponibilidades);
+        await axios.post(`http://localhost:5432/Servicio/Disponibilidades/${serviceId}`, Disponibilidades);
+        setSelectedDay('Lunes');
+        setFromTime('');
+        setToTime('');
+        setShiftDuration('');
+        setTimeBetweenShifts('')
+        handleConfirm()
+      } catch (error) {
+        console.error('Error al agregar service:', error);
+      }
+    }
+  };
+  
+
+
+const validateForm = () => {
+  let formErrors = {};
+
+  if (!selectedDay) formErrors.selectedDay = "El Dia es requerido.";
+  if (!fromTime)formErrors.fromTime = "El tiempo Desde es requerido.";
+  if (!toTime) formErrors.toTime = "El tiempo Hasta es requerido.";
+  if (!shiftDuration) formErrors.shiftDuration = "El tiempo de duracion es requerido";
+  if (!timeBetweenShifts) formErrors.timeBetweenShifts = "El tiempo entre turnos es requerido";
+
+  setErrors(formErrors);
+
+  return Object.keys(formErrors).length === 0;
+};
+
 
   const handleConfirm = () => {
+    let updatedSchedule = ""
+    let existingDayIndex = ""
     if (fromTime && toTime) {
-      const updatedSchedule = [...schedule];
-      const existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
-
+      updatedSchedule = [...schedule];
+      existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
+    }
       if (existingDayIndex !== -1) {
         // Si ya existe el día en el schedule, agregamos el nuevo rango de horario
         updatedSchedule[existingDayIndex].ranges.push({ from: fromTime, to: toTime });
@@ -30,17 +87,17 @@ const Horario = () => {
           timeBetweenShifts: timeBetweenShifts
         });
       }
-
       setSchedule(updatedSchedule);
       setFromTime('');
       setToTime('');
-    }
-  };
-
+  }
+    
   return (
+    
     <div className="horario-container">
       <h1>Disponibilidad horaria</h1>
       <p>Seleccionar los horarios en los que ofreces tu servicio</p>
+      <div className="time-inputs">
       <div className="dropdown">
         <button className="dropbtn">{selectedDay}</button>
         <div className="dropdown-content">
@@ -51,15 +108,16 @@ const Horario = () => {
           ))}
         </div>
       </div>
-      <div className="time-inputs">
         <div>
           <label>Desde</label>
           <input type="time" value={fromTime} onChange={(e) => setFromTime(e.target.value)} />
         </div>
+        {errors.fromTime && <p className="error-text">{errors.fromTime}</p>}
         <div>
           <label>Hasta</label>
           <input type="time" value={toTime} onChange={(e) => setToTime(e.target.value)} />
         </div>
+        {errors.toTime && <p className="error-text">{errors.toTime}</p>}
       </div>
       <div className="shift-details">
         <div>
@@ -69,6 +127,7 @@ const Horario = () => {
             value={shiftDuration}
             onChange={(e) => setShiftDuration(e.target.value)}
           />
+          {errors.shiftDuration && <p className="error-text">{errors.shiftDuration}</p>}
         </div>
         <div>
           <label>Tiempo entre turnos:</label>
@@ -77,9 +136,10 @@ const Horario = () => {
             value={timeBetweenShifts}
             onChange={(e) => setTimeBetweenShifts(e.target.value)}
           />
+          {errors.timeBetweenShifts && <p className="error-text">{errors.timeBetweenShifts}</p>}
         </div>
       </div>
-      <button onClick={handleConfirm}>Confirmar</button>
+      <button onClick={newDisponibilidad}>Confirmar</button>
 
       <div className="schedule-summary">
         <h2>Resumen de horarios confirmados</h2>
@@ -102,6 +162,7 @@ const Horario = () => {
       </div>
     </div>
   );
-};
+}
+
 
 export default Horario;

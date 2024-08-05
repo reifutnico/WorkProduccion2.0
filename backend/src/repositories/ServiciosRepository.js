@@ -137,14 +137,40 @@ async CrearServicio(servicio, disponibilidades){
                     VALUES (@idCreador, @idCategoria, @Nombre, @Descripcion, @Foto, @Precio);
                     SELECT SCOPE_IDENTITY() AS idServicio;
                 `);
+            const idServicio = transaction.request().recordset[0].idServicio;
             await transaction.commit();
             console.log('Servicio y disponibilidades insertados correctamente.');
+            return idServicio
         } catch (err) {
             await transaction.rollback();
             console.error('Error al insertar servicio y disponibilidades:', err);
         } finally {
             pool.close();
         }
+}
+
+async crearDisponibilidades(idServicio, Disponibilidades){
+    const pool = await getConnection();
+    const transaction = new sql.Transaction(pool);
+    try {
+        await transaction.begin();
+        await transaction.request()
+        .input('Dia', sql.SmallInt, Disponibilidades.Dia)
+        .input('idServicio', sql.Int, idServicio)
+        .query(`
+            INSERT INTO Disponibilidad (Dia, HoraDesde, HoraHasta, idServicio, DuracionTurno, Descanso)
+            VALUES (@Dia, '${Disponibilidades.HoraDesde}', '${Disponibilidades.HoraHasta}', @idServicio,
+             '${Disponibilidades.DuracionTurno}', '${Disponibilidades.Descanso}');
+        `);
+        await transaction.commit();
+        console.log('Servicio y disponibilidades insertados correctamente.');
+        
+    } catch (err) {
+        await transaction.rollback();
+        console.error('Error al insertar servicio y disponibilidades:', err);
+    } finally {
+        pool.close();
+    }
 }
 
 async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre){

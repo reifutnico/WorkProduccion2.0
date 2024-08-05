@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import './css/App.css';
 import Horario from './componentes/horario.js';
@@ -6,13 +6,15 @@ import CrearServicio from './componentes/CreateService';
 import Index from  './componentes/Index';
 import Navbar from  './componentes/Navbar';
 
+function App() 
+{
+  const [servicio,setServicio]=useState();
 
-function App() {
   return (
     <>
     <Index/>
-    <CrearServicio/>
-    <Horario /> 
+    <CrearServicio setService={setServicio}/>
+    <Horario/> 
     <Navbar /> 
 
       
