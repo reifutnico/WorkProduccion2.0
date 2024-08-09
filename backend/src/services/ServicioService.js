@@ -33,11 +33,8 @@ export default class ServicioService {
         }
     }
     async crearServicio2(servicio) {
-        try {
              return await servicioRepository.CrearServicio2prueba(servicio);
-        } catch (error) {
-            throw new Error('Error al crear el servicio');
-        }
+
     }
     async EditarDisponibilidad(disponibilidad) {
         try {

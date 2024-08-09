@@ -24,15 +24,16 @@ const CreateService = ({setService}) => {
       if (check)  {
         const newService = {
           idCreador: 1,
-          Nombre: NewNombre,
-          Precio: NewPrecio,
           idCategoria: 1,
+          Nombre: NewNombre,
+          Descripcion: NewDescripcion,
           Foto: image.name,
-          Descripcion: NewDescripcion
+          Precio: NewPrecio
         };
         try {
           console.log(newService);
           const idServicio = await axios.post('http://localhost:5432/Servicio', newService);
+          console.log(idServicio + "ssssss");
           setNewNombre('');
           setNewPrecio('');
           setNewCategoria('');

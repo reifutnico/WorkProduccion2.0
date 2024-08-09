@@ -83,11 +83,11 @@ async EditarServicio(servicio){
 }
 async CrearServicio(servicio, disponibilidades){
     const pool = await getConnection();
-    const transaction = new sql.Transaction(pool);
+    const request = pool.request();
 
     try {
         await transaction.begin();
-        const serviceResult = await transaction.request()
+        const serviceResult = await request
             .input('idCreador', sql.Int, servicio.idCreador)
             .input('idCategoria', sql.Int, servicio.idCategoria)
             .input('Nombre', sql.VarChar(50), servicio.Nombre)
@@ -122,10 +122,8 @@ async CrearServicio(servicio, disponibilidades){
 }
     async CrearServicio2prueba(servicio){
         const pool = await getConnection();
-        const transaction = new sql.Transaction(pool);
-        try {
-            await transaction.begin();
-            await transaction.request()
+        const request = pool.request();
+        const serviceResult = await request
                 .input('idCreador', sql.Int, servicio.idCreador)
                 .input('idCategoria', sql.Int, servicio.idCategoria)
                 .input('Nombre', sql.VarChar(50), servicio.Nombre)
@@ -137,16 +135,11 @@ async CrearServicio(servicio, disponibilidades){
                     VALUES (@idCreador, @idCategoria, @Nombre, @Descripcion, @Foto, @Precio);
                     SELECT SCOPE_IDENTITY() AS idServicio;
                 `);
-            const idServicio = transaction.request().recordset[0].idServicio;
-            await transaction.commit();
+            const idServicio = serviceResult.recordset[0].idServicio;
+            await request.query()
             console.log('Servicio y disponibilidades insertados correctamente.');
             return idServicio
-        } catch (err) {
-            await transaction.rollback();
-            console.error('Error al insertar servicio y disponibilidades:', err);
-        } finally {
-            pool.close();
-        }
+
 }
 
 async crearDisponibilidades(idServicio, Disponibilidades){

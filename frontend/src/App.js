@@ -8,12 +8,11 @@ import Navbar from  './componentes/Navbar';
 
 function App() 
 {
-  const [servicio,setServicio]=useState();
 
   return (
     <>
     <Index/>
-    <CrearServicio setService={setServicio}/>
+    <CrearServicio/>
     <Horario/> 
     <Navbar /> 
 

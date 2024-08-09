@@ -55,14 +55,10 @@ router.post("/", async (req, res) => {
       /*  if (!Array.isArray(Disponibilidades)) {
             return res.status(400).json({ error: "Disponibilidades tiene que ser array de datos" });
         }*/
-    try{
         const servicio = new Servicio(null, idCreador, idCategoria, Nombre, Descripcion, Foto, Precio);
         const id = await servicioService.crearServicio2(servicio);
         res.status(201).json({ message: 'Servicio creado exitosamente', id });
-        return res.status(200).json(id);
-    } catch (error){
-        res.status(500).json({ error: error.message });
-    }
+        return id;
 });
 
 router.post("/Disponibilidades/:id", async (req, res) => {
