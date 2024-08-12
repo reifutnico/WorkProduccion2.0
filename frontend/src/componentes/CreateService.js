@@ -3,73 +3,68 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/CreateService.css';
 
-const CreateService = ({setService}) => {
+const CreateService = ({ setService }) => {
+  const [NewNombre, setNewNombre] = useState('');
+  const [NewPrecio, setNewPrecio] = useState('');
+  const [NewCategoria, setNewCategoria] = useState('');
+  const [NewModalidad, setNewModalidad] = useState('presencial');
+  const [NewDescripcion, setNewDescripcion] = useState('');
 
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-    const [NewNombre, setNewNombre] = useState('');
-    const [NewPrecio, setNewPrecio] = useState('');
-    const [NewCategoria, setNewCategoria] = useState('');
-    const [NewModalidad, setNewModalidad] = useState('presencial');
-    const [NewDescripcion, setNewDescripcion] = useState('');
-    
-    const [image, setImage] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
-
-    const addService = async (e) => {
-      e.preventDefault(); 
-      let check = validateForm();
-      console.log(check)
-      console.log(NewCategoria)
-      if (check)  {
-      const categoria = await axios.get('http://localhost:5432/Categoria/', {
-        params: {
-          Nombre: NewCategoria
-        }
-      });        
-      console.log(categoria)
+  const addService = async (e) => {
+    e.preventDefault();
+    let check = validateForm();
+    console.log(check);
+    console.log(NewCategoria);
+    if (check) {
+      try {
+        const categoria = await axios.get('http://localhost:5432/Categoria/', {
+          params: {
+            Nombre: NewCategoria,
+          },
+        });
+        console.log(categoria);
         if (categoria.data[0] === undefined) {
           alert('No se encontró la categoría. La página se recargará.');
           window.location.reload();
-        }
-        else{
-          const idCategoria = categoria.data[0].id; 
-          console.log(idCategoria + "ssssss");
+        } else {
+          const idCategoria = categoria.data[0].id;
+          console.log(idCategoria + 'ssssss');
           const newService = {
             idCreador: 1,
             idCategoria: idCategoria,
             Nombre: NewNombre,
             Descripcion: NewDescripcion,
             Foto: image.name,
-            Precio: NewPrecio
+            Precio: NewPrecio,
           };
-          try {
-            console.log(newService);
-            const response = await axios.post('http://localhost:5432/Servicio', newService);
-            const idServicio = response.data.id;
-            console.log(idServicio + "ssssss");
-            setNewNombre('');
-            setNewPrecio('');
-            setNewCategoria('');
-            setNewModalidad('presencial');
-            setNewDescripcion('')
-            navigate(`/horario?id=${idServicio}`);
-          } catch (error) {
-            console.error('Error al agregar service:', error);
-          }
+          console.log(newService);
+          const response = await axios.post('http://localhost:5432/Servicio', newService);
+          const idServicio = response.data.id;
+          console.log(idServicio + 'ssssss');
+          setNewNombre('');
+          setNewPrecio('');
+          setNewCategoria('');
+          setNewModalidad('presencial');
+          setNewDescripcion('');
+          navigate(`/horario?id=${idServicio}`);
         }
+      } catch (error) {
+        console.error('Error al agregar servicio:', error);
       }
-    };
-    
-  
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setNewModalidad({
-        ...NewModalidad,
-        [name]: value
-      });
-    };
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'modalidad') {
+      setNewModalidad(value);
+    } 
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -82,20 +77,19 @@ const CreateService = ({setService}) => {
   const validateForm = () => {
     let formErrors = {};
 
-    if (!NewNombre) formErrors.Nombre = "El Nombre es requerido.";
+    if (!NewNombre) formErrors.Nombre = 'El Nombre es requerido.';
     if (!NewPrecio || !/^\d+(,\d{3})*(\.\d{2})?$/.test(NewPrecio)) {
-      formErrors.precio = "El precio debe estar en formato de dinero. Ej: $123.45";
+      formErrors.precio = 'El precio debe estar en formato de dinero. Ej: $123.45';
     }
-    if (!NewCategoria) formErrors.Categoria = "La categoría es requerida.";
-    if (!NewModalidad) formErrors.modalidad = "La modalidad es requerida.";
-    if (!NewDescripcion) formErrors.Descripcion = "La descripción es requerida.";
-    if (!image) formErrors.image = "La imagen es requerida.";
+    if (!NewCategoria) formErrors.Categoria = 'La categoría es requerida.';
+    if (!NewModalidad) formErrors.modalidad = 'La modalidad es requerida.';
+    if (!NewDescripcion) formErrors.Descripcion = 'La descripción es requerida.';
+    if (!image) formErrors.image = 'La imagen es requerida.';
 
     setErrors(formErrors);
 
     return Object.keys(formErrors).length === 0;
   };
-
 
   return (
     <div className="create-service-container">
@@ -112,7 +106,7 @@ const CreateService = ({setService}) => {
                   <span className="text">Subir imagen</span>
                 </div>
               )}
-              <input type="file" id="imageInput"  accept="image/*" onChange={handleImageChange} />
+              <input type="file" id="imageInput" accept="image/*" onChange={handleImageChange} />
             </label>
             {errors.image && <p className="error-text">{errors.image}</p>}
           </div>
@@ -142,7 +136,7 @@ const CreateService = ({setService}) => {
           <div className="form-group">
             <label htmlFor="precio">Precio</label>
             <input
-              type="int"
+              type="text"
               id="precio"
               name="precio"
               value={NewPrecio}
@@ -170,6 +164,7 @@ const CreateService = ({setService}) => {
               <option value="sincronica">Virtual sincrónica</option>
               <option value="asincronica">Virtual asincrónica</option>
             </select>
+            {errors.modalidad && <p className="error-text">{errors.modalidad}</p>}
           </div>
           <button type="submit" className="submit-button">Siguiente</button>
         </div>
