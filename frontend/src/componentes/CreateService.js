@@ -18,7 +18,7 @@ const CreateService = ({setService}) => {
     const navigate = useNavigate();
 
     const addService = async (e) => {
-      e.preventDefault(); // Previene el refresco de la página
+      e.preventDefault(); 
       let check = validateForm();
       console.log(check)
       if (check)  {
@@ -32,15 +32,15 @@ const CreateService = ({setService}) => {
         };
         try {
           console.log(newService);
-          const idServicio = await axios.post('http://localhost:5432/Servicio', newService);
+          const response = await axios.post('http://localhost:5432/Servicio', newService);
+          const idServicio = response.data.id;
           console.log(idServicio + "ssssss");
           setNewNombre('');
           setNewPrecio('');
           setNewCategoria('');
           setNewModalidad('presencial');
           setNewDescripcion('')
-          navigate(`/horario?id=${idServicio}`); // Redirige con el ID en la URL
-          setService()
+          navigate(`/horario?id=${idServicio}`);
         } catch (error) {
           console.error('Error al agregar service:', error);
         }

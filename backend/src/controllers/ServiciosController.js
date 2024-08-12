@@ -65,6 +65,7 @@ router.post("/Disponibilidades/:id", async (req, res) => {
     const Disponibilidades = req.body;
     const idServicio = req.params.id
     try{
+        console.log(idServicio)
         await servicioService.crearDisponibilidades(idServicio, Disponibilidades);
         res.status(201).json({ message: 'Disponibilidades creadas exitosamente' });
     } catch (error){
