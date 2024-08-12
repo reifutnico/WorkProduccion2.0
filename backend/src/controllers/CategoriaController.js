@@ -1,4 +1,5 @@
 import CategoriaService from "../services/CategoriaService";
+import express from "express";
 
 const router = express.Router();
 const categoriaService = new CategoriaService();
@@ -12,3 +13,4 @@ router.get("/", async (req, res) => {
         res.status(500).json({ error: error.message });
     } 
 });
+export default router;

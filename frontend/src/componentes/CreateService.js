@@ -18,13 +18,16 @@ const CreateService = ({setService}) => {
     const navigate = useNavigate();
 
     const addService = async (e) => {
+      const categoria = await axios.get('http://localhost:5432/Categoria', NewCategoria)
+      const idCategoria = categoria.data.id;
+      console.log(idCategoria + "ssssss");
       e.preventDefault(); 
       let check = validateForm();
       console.log(check)
       if (check)  {
         const newService = {
           idCreador: 1,
-          idCategoria: 1,
+          idCategoria: idCategoria,
           Nombre: NewNombre,
           Descripcion: NewDescripcion,
           Foto: image.name,
