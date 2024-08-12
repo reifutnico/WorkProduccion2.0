@@ -1,9 +1,9 @@
 import CategoriaRepository from "../repositories/CategoriasRepository.js";
 const categoriaRepository = new CategoriaRepository();
 export default class CategoriaService {
-    async BuscarCategoriaPorId(id) {
+    async BuscarCategoriaPorNombre(Nombre) {
         try {
-            return await categoriaRepository.BuscarCategoriaPorId(id);
+            return await categoriaRepository.BuscarCategoriaPorNombre(Nombre);
         } catch (error) {
            throw new Error('Error al obtener los servicios');
         }
