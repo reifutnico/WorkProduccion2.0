@@ -18,34 +18,46 @@ const CreateService = ({setService}) => {
     const navigate = useNavigate();
 
     const addService = async (e) => {
-      const categoria = await axios.get('http://localhost:5432/Categoria', NewCategoria)
-      const idCategoria = categoria.data.id;
-      console.log(idCategoria + "ssssss");
       e.preventDefault(); 
       let check = validateForm();
       console.log(check)
+      console.log(NewCategoria)
       if (check)  {
-        const newService = {
-          idCreador: 1,
-          idCategoria: idCategoria,
-          Nombre: NewNombre,
-          Descripcion: NewDescripcion,
-          Foto: image.name,
-          Precio: NewPrecio
-        };
-        try {
-          console.log(newService);
-          const response = await axios.post('http://localhost:5432/Servicio', newService);
-          const idServicio = response.data.id;
-          console.log(idServicio + "ssssss");
-          setNewNombre('');
-          setNewPrecio('');
-          setNewCategoria('');
-          setNewModalidad('presencial');
-          setNewDescripcion('')
-          navigate(`/horario?id=${idServicio}`);
-        } catch (error) {
-          console.error('Error al agregar service:', error);
+      const categoria = await axios.get('http://localhost:5432/Categoria/', {
+        params: {
+          Nombre: NewCategoria
+        }
+      });        
+      console.log(categoria)
+        if (categoria.data[0] === undefined) {
+          alert('No se encontró la categoría. La página se recargará.');
+          window.location.reload();
+        }
+        else{
+          const idCategoria = categoria.data[0].id; 
+          console.log(idCategoria + "ssssss");
+          const newService = {
+            idCreador: 1,
+            idCategoria: idCategoria,
+            Nombre: NewNombre,
+            Descripcion: NewDescripcion,
+            Foto: image.name,
+            Precio: NewPrecio
+          };
+          try {
+            console.log(newService);
+            const response = await axios.post('http://localhost:5432/Servicio', newService);
+            const idServicio = response.data.id;
+            console.log(idServicio + "ssssss");
+            setNewNombre('');
+            setNewPrecio('');
+            setNewCategoria('');
+            setNewModalidad('presencial');
+            setNewDescripcion('')
+            navigate(`/horario?id=${idServicio}`);
+          } catch (error) {
+            console.error('Error al agregar service:', error);
+          }
         }
       }
     };

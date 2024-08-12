@@ -1,4 +1,4 @@
-import CategoriaRepository from "../repositories/CategoriasRepository.js";
+import CategoriaRepository from "../repositories/CategoriaRepository.js";
 const categoriaRepository = new CategoriaRepository();
 export default class CategoriaService {
     async BuscarCategoriaPorNombre(Nombre) {
