@@ -32,58 +32,6 @@ const Navbar = () => {
             </div>
           )}
         </li>
-        <li
-          className="navbar-item"
-          onMouseEnter={() => handleMouseEnter('educacion')}
-          onMouseLeave={handleMouseLeave}
-        >
-          <Link to="/educacion">educacion</Link>
-          {dropdown === 'educacion' && (
-            <div className="dropdown">
-              <Link to="/option1">Option 1</Link>
-              <Link to="/option2">Option 2</Link>
-            </div>
-          )}
-        </li>
-        <li
-          className="navbar-item"
-          onMouseEnter={() => handleMouseEnter('consultoria')}
-          onMouseLeave={handleMouseLeave}
-        >
-          <Link to="/consultoria">consultoria</Link>
-          {dropdown === 'consultoria' && (
-            <div className="dropdown">
-              <Link to="/option1">Option 1</Link>
-              <Link to="/option2">Option 2</Link>
-            </div>
-          )}
-        </li>
-        <li
-          className="navbar-item"
-          onMouseEnter={() => handleMouseEnter('diseño')}
-          onMouseLeave={handleMouseLeave}
-        >
-          <Link to="/diseño">diseño</Link>
-          {dropdown === 'diseño' && (
-            <div className="dropdown">
-              <Link to="/option1">Option 1</Link>
-              <Link to="/option2">Option 2</Link>
-            </div>
-          )}
-        </li>
-        <li
-          className="navbar-item"
-          onMouseEnter={() => handleMouseEnter('desarrollo personal')}
-          onMouseLeave={handleMouseLeave}
-        >
-          <Link to="/desarrollo-personal">desarrollo personal</Link>
-          {dropdown === 'desarrollo personal' && (
-            <div className="dropdown">
-              <Link to="/option1">Option 1</Link>
-              <Link to="/option2">Option 2</Link>
-            </div>
-          )}
-        </li>
       </ul>
       <div className="navbar-buttons">
         <button className="navbar-button sign-up">Sign-Up</button>

@@ -5,15 +5,13 @@ import Horario from './componentes/horario';
 import Navbar from './componentes/Navbar';
 import Index from './componentes/Index';
 
-
 const AppRouter = () => (
   <Router>
+    <Navbar />
     <Routes>
-      <Route path="/" element={<CreateService />} />
+      <Route path="/" element={<Index />} />
+      <Route path="/crear-servicio" element={<CreateService />} />
       <Route path="/horario" element={<Horario />} />
-      <Route path="/Navbar" element={<Navbar />} />
-      <Route path="/Index" element={<Index />} />
-
     </Routes>
   </Router>
 );

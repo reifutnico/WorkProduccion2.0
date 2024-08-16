@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import '../css/Horario.css';
 import axios from 'axios';
@@ -13,6 +13,7 @@ const Horario = () => {
   const [schedule, setSchedule] = useState([]);
   const [serviceId, setServiceId] = useState(null);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
   const location = useLocation();
@@ -43,12 +44,17 @@ const Horario = () => {
         setShiftDuration('');
         setTimeBetweenShifts('')
         handleConfirm()
+
       } catch (error) {
         console.error('Error al agregar service:', error);
       }
     }
   };
   
+  const NextPage = async (e) => {
+    e.preventDefault(); // Previene el refresco de la página
+    navigate(`/`)
+  };
 
 
 const validateForm = () => {
@@ -140,6 +146,9 @@ const validateForm = () => {
         </div>
       </div>
       <button onClick={newDisponibilidad}>Confirmar</button>
+     
+     
+
 
       <div className="schedule-summary">
         <h2>Resumen de horarios confirmados</h2>
@@ -159,6 +168,7 @@ const validateForm = () => {
             </li>
           ))}
         </ul>
+        {schedule.length > 0 && <button onClick={NextPage}>Avanzar</button>}
       </div>
     </div>
   );
