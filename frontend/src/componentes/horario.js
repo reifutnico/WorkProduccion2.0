@@ -14,7 +14,7 @@ const Horario = () => {
   const [serviceId, setServiceId] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const daysOfWeek = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
   const location = useLocation();
 
   useEffect(() => {
@@ -22,13 +22,30 @@ const Horario = () => {
     setServiceId(params.get('id')); // Obtén el ID de los parámetros de consulta
   }, [location.search]);
 
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      if (serviceId) {
+        try {
+          const response = await axios.get(`http://localhost:5432/Disponibilidad/${serviceId}`);
+          setSchedule(response.data);
+        } catch (error) {
+          console.error('Error al obtener disponibilidad:', error);
+        }
+      }
+    };
+
+    fetchSchedule();
+  }, [serviceId])
+
+  //Para el programa, hacer que la lista de abajo se actualize con la base de datos en vez del localstorage, y hacer la verificacion de los horarios en el frontend 
+
   const newDisponibilidad = async (e) => {
     e.preventDefault(); // Previene el refresco de la página
     let check = validateForm();
     console.log(check);
     if (check)  {
       const Disponibilidades = {
-        Dia: 1,
+        Dia: selectedDay,
         HoraDesde: fromTime,
         HoraHasta: toTime,
         DuracionTurno: shiftDuration,
@@ -65,14 +82,11 @@ const validateForm = () => {
   return Object.keys(formErrors).length === 0;
 };
 
-
   const handleConfirm = () => {
-    let updatedSchedule = ""
-    let existingDayIndex = ""
+    let updatedSchedule = [...schedule];
+    let existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
+
     if (fromTime && toTime) {
-      updatedSchedule = [...schedule];
-      existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
-    }
       if (existingDayIndex !== -1) {
         // Si ya existe el día en el schedule, agregamos el nuevo rango de horario
         updatedSchedule[existingDayIndex].ranges.push({ from: fromTime, to: toTime });
@@ -90,7 +104,8 @@ const validateForm = () => {
       setSchedule(updatedSchedule);
       setFromTime('');
       setToTime('');
-  }
+    }
+  };
     
   return (
     
