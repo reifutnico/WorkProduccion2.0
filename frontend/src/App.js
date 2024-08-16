@@ -14,9 +14,7 @@ function App()
     <Index/>
     <CrearServicio/>
     <Horario/> 
-    <Navbar /> 
-
-      
+    <Navbar />
     </>
   );
 }

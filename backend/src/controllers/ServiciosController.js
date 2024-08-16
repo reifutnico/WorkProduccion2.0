@@ -7,7 +7,7 @@ const router = express.Router();
 const servicioService = new ServicioService();
 
 router.get("/", async (req, res) => {
-    const { Nombre, CategoriaNombre, UsuarioNombre } = req.body;
+    const { Nombre, CategoriaNombre, UsuarioNombre } = req.query;
     try {
         const servicios = await servicioService.BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre);
         res.status(200).json(servicios);
@@ -56,7 +56,7 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ error: "Disponibilidades tiene que ser array de datos" });
         }*/
         const servicio = new Servicio(null, idCreador, idCategoria, Nombre, Descripcion, Foto, Precio);
-        const id = await servicioService.crearServicio2(servicio);
+        const id = await servicioService.CrearServicio(servicio);
         res.status(201).json({ message: 'Servicio creado exitosamente', id });
         return id;
 });

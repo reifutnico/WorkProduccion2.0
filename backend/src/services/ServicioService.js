@@ -24,17 +24,12 @@ export default class ServicioService {
             throw new Error('Error al actualizar el servicio (Service)');
         }
     }
-
-    async crearServicio(servicio, disponibilidades) {
+    async CrearServicio(servicio) {
         try {
-            await servicioRepository.CrearServicio(servicio, disponibilidades);
+            return await servicioRepository.CrearServicio(servicio);
         } catch (error) {
-            throw new Error('Error al crear el servicio');
+            throw new Error('Error al crear servicio');
         }
-    }
-    async crearServicio2(servicio) {
-             return await servicioRepository.CrearServicio2prueba(servicio);
-
     }
     async EditarDisponibilidad(disponibilidad) {
         try {

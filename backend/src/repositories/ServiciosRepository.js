@@ -1,10 +1,7 @@
 import {getConnection} from '../BD/database.js'
 import sql, {  } from "mssql";
 
-
 export default class ServicioRepository{
-
-    
 async BorrarServicio(id, id_creator_user){
     var query = `DELETE FROM Servicios WHERE id = ${id} AND idCreador = ${id_creator_user}`;
     try {
@@ -81,65 +78,25 @@ async EditarServicio(servicio){
         throw error;
     }
 }
-async CrearServicio(servicio, disponibilidades){
+async CrearServicio(servicio){
     const pool = await getConnection();
     const request = pool.request();
-
-    try {
-        await transaction.begin();
-        const serviceResult = await request
-            .input('idCreador', sql.Int, servicio.idCreador)
-            .input('idCategoria', sql.Int, servicio.idCategoria)
-            .input('Nombre', sql.VarChar(50), servicio.Nombre)
-            .input('Descripcion', sql.Text, servicio.Descripcion)
-            .input('Foto', sql.Image, servicio.Foto)
-            .input('Precio', sql.Money, servicio.Precio)
-            .query(`
-                INSERT INTO Servicios (idCreador, idCategoria, Nombre, Descripcion, Foto, Precio)
-                VALUES (@idCreador, @idCategoria, @Nombre, @Descripcion, @Foto, @Precio);
-                SELECT SCOPE_IDENTITY() AS idServicio;
-            `);
-
-        const idServicio = serviceResult.recordset[0].idServicio;
-        for (var disponibilidad of disponibilidades) {
-            await transaction.request()
-                .input('Dia', sql.SmallInt, disponibilidad.Dia)
-                .input('idServicio', sql.Int, idServicio)
-                .query(`
-                    INSERT INTO Disponibilidad (Dia, HoraDesde, HoraHasta, idServicio, DuracionTurno, Descanso)
-                    VALUES (@Dia, '${disponibilidad.HoraDesde}', '${disponibilidad.HoraHasta}', @idServicio,
-                     '${disponibilidad.DuracionTurno}', '${disponibilidad.Descanso}');
-                `);
-        }
-        await transaction.commit();
-        console.log('Servicio y disponibilidades insertados correctamente.');
-    } catch (err) {
-        await transaction.rollback();
-        console.error('Error al insertar servicio y disponibilidades:', err);
-    } finally {
-        pool.close();
-    }
-}
-    async CrearServicio2prueba(servicio){
-        const pool = await getConnection();
-        const request = pool.request();
-        const serviceResult = await request
-                .input('idCreador', sql.Int, servicio.idCreador)
-                .input('idCategoria', sql.Int, servicio.idCategoria)
-                .input('Nombre', sql.VarChar(50), servicio.Nombre)
-                .input('Descripcion', sql.VarChar(100), servicio.Descripcion)
-                .input('Foto', sql.VarChar(100), servicio.Foto)
-                .input('Precio', sql.Money, servicio.Precio)
-                .query(`
-                    INSERT INTO Servicios (idCreador, idCategoria, Nombre, Descripcion, Foto, Precio)
-                    VALUES (@idCreador, @idCategoria, @Nombre, @Descripcion, @Foto, @Precio);
-                    SELECT SCOPE_IDENTITY() AS idServicio;
-                `);
-            const idServicio = serviceResult.recordset[0].idServicio;
-            await request.query()
-            console.log('Servicio y disponibilidades insertados correctamente.');
-            return idServicio
-
+    const serviceResult = await request
+        .input('idCreador', sql.Int, servicio.idCreador)
+        .input('idCategoria', sql.Int, servicio.idCategoria)
+        .input('Nombre', sql.VarChar(50), servicio.Nombre)
+        .input('Descripcion', sql.VarChar(100), servicio.Descripcion)
+        .input('Foto', sql.VarChar(100), servicio.Foto)
+        .input('Precio', sql.Money, servicio.Precio)
+        .query(`
+            INSERT INTO Servicios (idCreador, idCategoria, Nombre, Descripcion, Foto, Precio)
+            VALUES (@idCreador, @idCategoria, @Nombre, @Descripcion, @Foto, @Precio);
+            SELECT SCOPE_IDENTITY() AS idServicio;
+        `);
+    const idServicio = serviceResult.recordset[0].idServicio;
+    await request.query()
+    console.log('Servicio y disponibilidades insertados correctamente.');
+    return idServicio
 }
 
 async crearDisponibilidades(idServicio, Disponibilidades){
@@ -148,7 +105,7 @@ async crearDisponibilidades(idServicio, Disponibilidades){
     try {
         await transaction.begin();
         await transaction.request()
-        .input('Dia', sql.SmallInt, Disponibilidades.Dia)
+        .input('Dia', sql.VarChar(10), Disponibilidades.Dia)
         .input('idServicio', sql.Int, idServicio)
         .query(`
             INSERT INTO Disponibilidad (Dia, HoraDesde, HoraHasta, idServicio, DuracionTurno, Descanso)
