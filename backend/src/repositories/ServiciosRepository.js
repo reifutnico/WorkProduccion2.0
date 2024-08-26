@@ -126,7 +126,7 @@ async crearDisponibilidades(idServicio, Disponibilidades){
 async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre){
     const pool = await getConnection()
     const request = await pool.request()
-    var query = `SELECT s.id, idCreador, idCategoria, s.Nombre, Descripcion, Foto, Precio, c.Nombre, u.Nombre, COUNT(sc.idServicio) AS cantidad_contratos
+    var query = `SELECT s.id, idCreador, idCategoria, s.Nombre, Descripcion, Foto, Precio, c.Nombre AS CategoriaNombre, u.Nombre AS CreadorNombre, COUNT(sc.idServicio) AS cantidad_contratos
     FROM
     Servicios s
     LEFT JOIN
@@ -135,11 +135,9 @@ async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre){
     INNER JOIN Usuarios u on s.idCreador = u.id
     GROUP BY
     s.id, s.Nombre, s.idCreador, s.idCategoria, s.Descripcion, s.Foto, s.Precio, c.Nombre, u.Nombre
-    ORDER BY
-    cantidad_contratos DESC WHERE `
+    HAVING `
     if (Nombre != null) {
-        query +=  `s.Nombre LIKE @Nombre AND `
-        request.input('Nombre', sql.VarChar(50), Nombre)
+        query +=  `s.Nombre LIKE '${Nombre}%' AND `
     }
     if (CategoriaNombre != null) {
         query += `c.Nombre = @CategoriaNombre AND `
@@ -152,9 +150,11 @@ async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre){
     if (query.endsWith(' AND ')) {
         query = query.slice(0, -5)
     }
-    if (query.endsWith(' WHERE ')) {
-        query = query.slice(0, -6)
+    if (query.endsWith(' HAVING ')) {
+        query = query.slice(0, -7)
     }
+    query += ` ORDER BY cantidad_contratos DESC`
+    
     console.log(query)
     const {recordset} = await request.query(query);
     return recordset
