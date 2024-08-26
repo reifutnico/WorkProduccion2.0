@@ -4,6 +4,8 @@ import CreateService from './componentes/CreateService';
 import Horario from './componentes/horario';
 import Navbar from './componentes/Navbar';
 import Index from './componentes/Index';
+import SearchResults from './componentes/SearchResults';
+
 
 const AppRouter = () => (
   <Router>
@@ -12,6 +14,7 @@ const AppRouter = () => (
       <Route path="/" element={<Index />} />
       <Route path="/crear-servicio" element={<CreateService />} />
       <Route path="/horario" element={<Horario />} />
+      <Route path="/resultados" element={<SearchResults />} />
     </Routes>
   </Router>
 );
