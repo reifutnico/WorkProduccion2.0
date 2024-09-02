@@ -12,4 +12,17 @@ router.get("/", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+
+
+router.get("/", async (req, res) => {
+    try {
+        const categorias = await categoriaService.BuscarCategoriaPorNombre(req.query.Nombre);
+        res.status(200).json(categorias);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 export default router;
