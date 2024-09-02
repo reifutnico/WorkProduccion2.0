@@ -140,8 +140,7 @@ async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre){
         query +=  `s.Nombre LIKE '${Nombre}%' AND `
     }
     if (CategoriaNombre != null) {
-        query += `c.Nombre = @CategoriaNombre AND `
-        request.input('CategoriaNombre', sql.VarChar(50), CategoriaNombre)
+        query += `c.Nombre LIKE '${CategoriaNombre}' AND `
     }
     if (UsuarioNombre != null) {
         query += `u.Nombre = @UsuarioNombre `
