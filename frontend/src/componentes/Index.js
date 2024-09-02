@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import trabajadorImg from '../img/trabajadorIndex.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/index.css';
@@ -26,7 +27,8 @@ const Index = () => {
     <div className="container">
       <main>
         <div className="main-content">
-          <h2>El mejor servicio, al mejor precio.</h2>
+        <div className="arriba">
+          <h2>Encuentra el servicio a mejor precio.</h2>
           <div className="search-bar">
             <input 
               type="text" 
@@ -38,16 +40,24 @@ const Index = () => {
                 <i className="fas fa-search"></i> Buscar
             </button>
           </div>  
+          </div>  
+
+          <div className="medio">
+          <h3>Encuentra el servicio a mejor precio.</h3>
           <button className="join-btn">Únete a Worky</button>
-          <img src="https://your-image-url.com/worker.png" alt="Worker" className="worker-image" />
-        </div>
-        <div className="create-service">
+          <div className="create-service">
           <a href="/crear-servicio">
             <button className="create-service-button">Crear Servicio</button>
           </a>
         </div>
+        </div>
+        </div>  
+
       </main>
+      <img src={trabajadorImg} alt='imagen_trabajador' className='img-container'></img>
+
     </div>
+    
   );
 }
 

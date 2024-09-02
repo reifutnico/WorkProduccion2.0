@@ -1,59 +1,126 @@
+/* Tarjeta Principal */
+.card {
+  background-color: white;
+  width: 300px;
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  margin: 20px;
+  position: relative;
+}
+
+/* Contenedor de la Imagen */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.service-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-bottom: 3px solid #ffbe33;
+}
+
+.service-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  color: #888;
+  font-size: 18px;
+  border-bottom: 3px solid #ffbe33;
+}
+
+.heart-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: #ff4d4d;
+  background-color: white;
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.heart-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Información del Servicio */
+.info {
+  background-color: #ffbe33;
+  padding: 15px;
+  color: white;
+  text-align: center;
+}
+
+.service-name {
+  
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.Category {
+  font-size: 16px;
+  color: #008a07;
+  margin: 5px 0;
+}
+
+.price-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.price {
+  font-size: 18px;
+  color: white;
+  font-weight: bold;
+}
+
+.rating {
+  font-size: 16px;
+  color: white;
+}
+
+/* Descripción del Servicio */
+.description {
+  font-size: 14px;
+  text-align: left;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+}
+
+/* Lista de Servicios */
 .services-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .service-item {
-    flex: 1 1 calc(25% - 20px);
-    box-sizing: border-box;
-    margin: 10px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .service-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
-  }
-  
-  .service-placeholder {
-    width: 100%;
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e0e0e0;
-    color: #888;
-    font-size: 14px;
-    border-radius: 5px;
-  }
-  
-  /* Estilo para centrar el mensaje de "No se encontraron servicios" */
-  .no-services {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 18px;
-    color: #555;
-    padding: 50px 0; /* Añade un poco de espacio arriba y abajo */
-  }
-  
-  /* Para pantallas más pequeñas */
-  @media (max-width: 768px) {
-    .service-item {
-      flex: 1 1 calc(50% - 20px);
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .service-item {
-      flex: 1 1 100%;
-    }
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.service-item {
+  margin: 20px;
+}
+
+/* Mensaje si no hay Servicios */
+.no-services {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  padding: 50px 0;
+}
