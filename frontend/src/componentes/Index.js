@@ -12,7 +12,7 @@ const Index = () => {
     try {
       // Usar la URL completa con el puerto especificado
       const response = await axios.get('http://localhost:5432/Servicio/', {
-        params: { Nombre: searchTerm }
+        params: { CategoriaNombre: searchTerm }
       });
       const servicios = response.data;
 
