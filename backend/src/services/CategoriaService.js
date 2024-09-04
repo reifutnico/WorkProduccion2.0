@@ -8,4 +8,23 @@ export default class CategoriaService {
            throw new Error('Error al obtener los servicios');
         }
     }
+
+    
+    async CategoriasMadre() {
+        try {
+            return await categoriaRepository.CategoriasMadre();
+        } catch (error) {
+           throw new Error('Error al obtener las categoriasMadres');
+        }
+    }
+
+    async Categorias(id) {
+        try {
+            return await categoriaRepository.Categorias(id);
+        } catch (error) {
+           throw new Error('Error al obtener las categorias');
+        }
+    }
+
+    
 }    

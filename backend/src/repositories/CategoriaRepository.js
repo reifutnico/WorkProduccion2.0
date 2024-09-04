@@ -21,4 +21,23 @@ export default class CategoriaRepository{
         const {recordset} = await request.query(query);
         return recordset
     }
+
+    async CategoriasMadre(){
+        const pool = await getConnection()
+        const request = await pool.request()
+        var query = `select * from CategoriaMadre`
+        const {recordset} = await request.query(query);
+        return recordset
+    }
+
+    async Categorias(id){
+        const pool = await getConnection()
+        const request = await pool.request()
+        var query = `select * from Categorias where idCategoriaMadre = @id`
+        request.input('id', sql.Int, id)
+        const {recordset} = await request.query(query);
+        return recordset
+    }
+
+    
 }
