@@ -1,96 +1,66 @@
-/* Ajuste del contenedor de la barra de navegación */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
-    padding: 10px 20px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Estilo del logo */
-.navbar-logo a {
-    font-size: 24px;
-    font-weight: bold;
-    color: black;
-    text-decoration: none;
-}
-
-/* Ajuste del menú de navegación */
-.navbar-menu {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-    margin: 0;
-    padding: 0;
-}
-
-.navbar-item {
-    position: relative;
-}
-
-.navbar-item a {
-    text-decoration: none;
-    color: black;
+    background-color: #ffffff;
     padding: 10px;
-    display: block;
-}
-
-/* Estilo del dropdown */
-
-
-
-/* Ajuste de los botones de registro e inicio de sesión */
-.navbar-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.navbar-button {
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-}
-
-.sign-up {
-    background-color: #ffcc00;
-    color: black;
-}
-
-.log-in {
-    background-color: #00cc00;
-    color: white;
-}
-
-/* Asegurar que la barra de navegación responda adecuadamente en diferentes tamaños de pantalla */
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .navbar-menu {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .navbar-buttons {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-.create-service-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
+    position: relative; /* Asegúrate de que el navbar sea el contenedor de referencia */
   }
   
-  .create-service-button:hover {
-    background-color: #45a049;
+  .navbar-logo a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 24px;
+  }
+  
+  .navbar-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .navbar-item {
+    position: relative; /* Necesario para posicionar el dropdown */
+  }
+  
+  .navbar-item a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+  }
+  
+  .dropdown {
+    display: none; /* Inicialmente oculto */
+    position: absolute;
+    top: 100%; /* Alinea el dropdown justo debajo del elemento padre */
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #555;
+    z-index: 1000;
+  }
+  
+  .navbar-item:hover .dropdown {
+    display: block; /* Muestra el dropdown al pasar el mouse sobre el item */
+  }
+  
+  .dropdown a {
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown a:hover {
+    background-color: #ffffff;
+  }
+  
+  .navbar-buttons {
+    display: flex;
+  }
+  
+  .navbar-button {
+    margin-left: 10px;
   }
   

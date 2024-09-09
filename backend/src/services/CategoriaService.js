@@ -26,5 +26,14 @@ export default class CategoriaService {
         }
     }
 
+    async SubCategorias(id) {
+        try {
+            return await categoriaRepository.SubCategorias(id);
+        } catch (error) {
+           throw new Error('Error al obtener las SubCategorias');
+        }
+    }
+
+
     
 }    

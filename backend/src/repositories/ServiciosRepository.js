@@ -1,5 +1,5 @@
 import {getConnection} from '../BD/database.js'
-import sql, {  } from "mssql";
+import sql from "mssql";
 
 export default class ServicioRepository{
 async BorrarServicio(id, id_creator_user){
@@ -86,7 +86,7 @@ async CrearServicio(servicio){
         .input('idCategoria', sql.Int, servicio.idCategoria)
         .input('Nombre', sql.VarChar(50), servicio.Nombre)
         .input('Descripcion', sql.VarChar(100), servicio.Descripcion)
-        .input('Foto', sql.VarChar(100), servicio.Foto)
+        .input('Foto', sql.VarChar, servicio.Foto)
         .input('Precio', sql.Money, servicio.Precio)
         .query(`
             INSERT INTO Servicios (idCreador, idCategoria, Nombre, Descripcion, Foto, Precio)
@@ -140,11 +140,10 @@ async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre){
         query +=  `s.Nombre LIKE '${Nombre}%' AND `
     }
     if (CategoriaNombre != null) {
-        query += `c.Nombre LIKE '${CategoriaNombre}' AND `
+        query += `c.Nombre LIKE '${CategoriaNombre}%' AND `
     }
     if (UsuarioNombre != null) {
-        query += `u.Nombre = @UsuarioNombre `
-        request.input('UsuarioNombre', sql.VarChar(50), UsuarioNombre)
+        query += `u.Nombre LIKE '${UsuarioNombre}%' AND `
     }
     if (query.endsWith(' AND ')) {
         query = query.slice(0, -5)

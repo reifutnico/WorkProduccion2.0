@@ -39,5 +39,13 @@ export default class CategoriaRepository{
         return recordset
     }
 
+    async SubCategorias(id){
+        const pool = await getConnection()
+        const request = await pool.request()
+        var query = `select * from Categorias where id_CategoriaMadre = @id`
+        request.input('id', sql.Int, id)
+        const {recordset} = await request.query(query);
+        return recordset
+    }
     
 }
