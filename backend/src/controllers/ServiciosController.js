@@ -10,6 +10,7 @@ router.get("/", async (req, res) => {
     const { Nombre, CategoriaNombre, UsuarioNombre } = req.query;
     try {
         const servicios = await servicioService.BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre);
+        console.log(Nombre, CategoriaNombre, UsuarioNombre)
         res.status(200).json(servicios);
     } catch (error) {
         res.status(500).json({ error: error.message });

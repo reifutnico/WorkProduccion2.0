@@ -95,7 +95,7 @@ async CrearServicio(servicio){
         `);
     const idServicio = serviceResult.recordset[0].idServicio;
     await request.query()
-    console.log('Servicio y disponibilidades insertados correctamente.');
+    console.log('Servicios insertados correctamente.');
     return idServicio
 }
 

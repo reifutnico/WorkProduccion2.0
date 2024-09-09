@@ -6,17 +6,16 @@ import '../css/index.css';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [modo, setModo] = useState("Nombre");
   const navigate = useNavigate();
-
   const handleSearch = async () => {
     try {
-      // Usar la URL completa con el puerto especificado
-      const response = await axios.get('http://localhost:5432/Servicio/', {
-        params: { CategoriaNombre: searchTerm }
-      });
+      const params = {
+        [modo]: searchTerm
+      };
+      const response = await axios.get(`http://localhost:5432/Servicio/`, { params });
+      console.log(modo, searchTerm, response.data)
       const servicios = response.data;
-
-      // Navegar a la página de resultados, pasando la búsqueda y los resultados
       navigate('/resultados', { state: { searchTerm, servicios } });
     } catch (error) {
       console.error("Error al buscar servicios:", error);
@@ -39,7 +38,12 @@ const Index = () => {
             <button className="search-btn" onClick={handleSearch}>
                 <i className="fas fa-search"></i> Buscar
             </button>
-          </div>  
+            <select value={modo} onChange={(e) => setModo(e.target.value)}>
+                <option value="Nombre">Nombre</option>
+                <option value="CategoriaNombre">Categoría</option>
+                <option value="UsuarioNombre">Usuario</option>
+              </select>
+          </div> 
           </div>  
 
           <div className="medio">

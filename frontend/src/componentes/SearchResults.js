@@ -7,19 +7,20 @@ import axios from 'axios';
 
 const SearchResults = () => {
   const location = useLocation();
-  const { searchTerm, servicios } = location.state;
+  let { searchTerm, servicios } = location.state;
+  const [modo, setModo] = useState("Nombre");
   const [searchTerm2, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
   const handleSearch = async () => {
     try {
-      // Usar la URL completa con el puerto especificado
-      const response = await axios.get('http://localhost:5432/Servicio/', {
-        params: { CategoriaNombre: searchTerm2 }
-      });
+      const params = {
+        [modo]: searchTerm2
+      };
+      const response = await axios.get('http://localhost:5432/Servicio/', { params });
       const servicios = response.data;
-
-      // Navegar a la página de resultados, pasando la búsqueda y los resultados
+      console.log(searchTerm, searchTerm2)
+      searchTerm = searchTerm2
       navigate('/resultados', { state: { searchTerm, servicios } });
     } catch (error) {
       console.error("Error al buscar servicios:", error);
@@ -37,6 +38,11 @@ const SearchResults = () => {
         <button className="search-btn2" onClick={handleSearch}>
           <i className="fas fa-search"></i> Buscar
         </button>
+        <select value={modo} onChange={(e) => setModo(e.target.value)}>
+          <option value="Nombre">Nombre</option>
+          <option value="CategoriaNombre">Categoría</option>
+          <option value="UsuarioNombre">Usuario</option>
+        </select>
       </div>
   
       <div className="result-container">
