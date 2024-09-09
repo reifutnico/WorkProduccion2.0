@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import axios from "axios";
 import 'react-calendar/dist/Calendar.css';
+import '../css/PerfilServicio.css'; // Asegúrate de importar el CSS
+import { useParams } from 'react-router-dom'; // Importa useParams
+
+// Mapeo de días de la semana en inglés
+const diasDeLaSemana = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 // Hook personalizado para obtener disponibilidad
 const useDisponibilidad = (idServicio) => {
@@ -12,7 +17,7 @@ const useDisponibilidad = (idServicio) => {
     useEffect(() => {
         const obtenerHorarios = async () => {
             try {
-                const response = await axios.get(`/disponibilidad/${idServicio}`);
+                const response = await axios.get(`http://localhost:5432/Disponibilidad/${idServicio}`);
                 setDisponibilidad(response.data);
             } catch (err) {
                 setError(err.message);
@@ -21,14 +26,17 @@ const useDisponibilidad = (idServicio) => {
             }
         };
 
-        obtenerHorarios();
+        if (idServicio) {
+            obtenerHorarios();
+        }
     }, [idServicio]);
 
     return { disponibilidad, loading, error };
 };
 
 // Componente del calendario con disponibilidad
-const PerfilServicio = ({ idServicio }) => {
+const PerfilServicio = () => {
+    const { idServicio } = useParams(); // Obtén idServicio de los parámetros de la URL
     const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
     const [mostrarDisponibilidad, setMostrarDisponibilidad] = useState(false);
 
@@ -40,16 +48,16 @@ const PerfilServicio = ({ idServicio }) => {
         setMostrarDisponibilidad(true);
     };
 
+    // Obtener el día de la semana de la fecha seleccionada
+    const diaSeleccionado = diasDeLaSemana[fechaSeleccionada.getDay()];
+
     // Filtrar disponibilidad por el día seleccionado
     const horariosFiltrados = disponibilidad.filter(
-        (horario) => {
-            const diaBD = new Date(horario.Dia); // Convertir el día de la BD a un objeto Date
-            return diaBD.toDateString() === fechaSeleccionada.toDateString(); // Comparar fechas
-        }
+        (horario) => horario.Dia === diaSeleccionado
     );
 
     return (
-        <div>
+        <div className="calendar-container">
             <h2>Selecciona un día</h2>
             <Calendar onChange={handleDateChange} value={fechaSeleccionada} />
             
@@ -73,10 +81,10 @@ const PerfilServicio = ({ idServicio }) => {
                             <tbody>
                                 {horariosFiltrados.map((horario) => (
                                     <tr key={horario.id}>
-                                        <td>{horario.HoraDesde}</td>
-                                        <td>{horario.HoraHasta}</td>
-                                        <td>{horario.DuracionTurno} minutos</td>
-                                        <td>{horario.Descanso} minutos</td>
+                                        <td>{new Date(horario.HoraDesde).toLocaleTimeString()}</td>
+                                        <td>{new Date(horario.HoraHasta).toLocaleTimeString()}</td>
+                                        <td>{new Date(horario.DuracionTurno).toLocaleTimeString()}</td>
+                                        <td>{new Date(horario.Descanso).toLocaleTimeString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
