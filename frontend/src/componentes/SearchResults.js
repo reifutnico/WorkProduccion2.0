@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../css/SearchResults.css';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 
@@ -19,13 +18,13 @@ const SearchResults = () => {
       };
       const response = await axios.get('http://localhost:5432/Servicio/', { params });
       const servicios = response.data;
-      console.log(searchTerm, searchTerm2)
-      searchTerm = searchTerm2
+      searchTerm = searchTerm2;
       navigate('/resultados', { state: { searchTerm, servicios } });
     } catch (error) {
       console.error("Error al buscar servicios:", error);
     }
   };
+
   return (
     <div className="container2">
       <div className="search-bar2">
@@ -61,18 +60,24 @@ const SearchResults = () => {
         )}
       </div>
     </div>
-  );}
+  );
+};
 
 const ServiceCard = ({ service }) => {
   const [liked, setLiked] = useState(false);
+  const navigate = useNavigate();
 
   const toggleLike = () => {
     setLiked(!liked);
   };
 
+  // Nueva función para manejar el clic y la navegación a la ruta de perfil
+  const handleCardClick = () => {
+    navigate(`/perfil-servicio/${service.id}`);
+  };
+
   return (
-    
-    <div className="card service-item">
+    <div className="card service-item" onClick={handleCardClick}>
       <div className="image-container">
         {service.Foto ? (
           <img src={service.Foto} alt={service.Nombre} className="service-image" />
@@ -81,7 +86,10 @@ const ServiceCard = ({ service }) => {
         )}
         <div
           className={`heart-icon ${liked ? 'liked' : ''}`}
-          onClick={toggleLike}
+          onClick={(e) => {
+            e.stopPropagation(); // Evita que se dispare la navegación al hacer clic en el corazón
+            toggleLike();
+          }}
         >
           ❤
         </div>

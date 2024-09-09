@@ -1,0 +1,78 @@
+/* CalendarioConDisponibilidad.css */
+
+.calendar-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.react-calendar {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.react-calendar__tile {
+    border-radius: 4px;
+}
+
+.react-calendar__tile--active {
+    background: #007bff;
+    color: white;
+}
+
+.react-calendar__tile--active:enabled:hover {
+    background: #0056b3;
+}
+
+.react-calendar__tile--hasActive {
+    background: #e9ecef;
+}
+
+.react-calendar__month-view__days__day {
+    font-size: 1rem;
+}
+
+h3 {
+    margin-top: 20px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+p {
+    text-align: center;
+    color: #888;
+}
