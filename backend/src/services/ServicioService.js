@@ -55,4 +55,12 @@ export default class ServicioService {
     }
 
     
+    async crearTurnos(idDisponibilidad, Turnos) {
+        try {
+            return await servicioRepository.crearTurnos(idDisponibilidad, Turnos);
+        } catch (error) {
+           throw new Error('Error al crear disponibilidades');
+        }
+    }
+
 }

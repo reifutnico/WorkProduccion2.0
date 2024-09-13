@@ -74,6 +74,18 @@ router.post("/Disponibilidades/:id", async (req, res) => {
     }
 });
 
+router.post("/Turnos/:id", async (req, res) => {
+    const Turnos = req.body;
+    const idDisponibilidad = req.params.id
+    try{
+        console.log(idDisponibilidad)
+        console.log("entree a turnos");
+        await servicioService.crearTurnos(idDisponibilidad, Turnos);
+        res.status(201).json({ message: 'Turnos creadas exitosamente' });
+    } catch (error){
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 export default router;
