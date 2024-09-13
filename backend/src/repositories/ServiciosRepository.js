@@ -186,7 +186,65 @@ export default class ServicioRepository {
         }
     }
     
+    async ObtenerTurnos(idDisponibilidad) {
+        const pool = await getConnection();
+        const request = pool.request();
 
+        try {
+            // Consulta para obtener los turnos asociados al idDisponibilidad
+            const query = `
+                SELECT comienzo, final, estado
+                FROM Turnos
+                WHERE idDisponibilidad = @idDisponibilidad
+                ORDER BY comienzo;
+            `;
+            // Ejecutar la consulta
+            request.input('idDisponibilidad', sql.Int, idDisponibilidad);
+            const result = await request.query(query);
+
+            // Devolver los turnos obtenidos
+            return result.recordset;
+        } catch (error) {
+            console.error('Error al obtener los turnos:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+
+    
+    async ObtenerDisponibilidad(idServicio, Dia) {
+        const pool = await getConnection();
+        const request = pool.request();
+        try {
+            const query = `
+                SELECT id
+                FROM Disponibilidad
+                WHERE idServicio = @idServicio AND Dia = @Dia
+            `;
+            request.input('idServicio', sql.Int, idServicio);
+            request.input('Dia', sql.VarChar, Dia);
+    
+            const result = await request.query(query);
+    
+            // Depurar resultados
+            console.log('Resultados de la consulta:', result.recordset);
+    
+            if (result.recordset.length === 0) {
+                console.log('No se encontraron resultados.');
+                return []; // Devolver un array vacío en lugar de null
+            }
+    
+            return result.recordset;
+        } catch (error) {
+            console.error('Error al obtener la disponibilidad:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+    
+    
     async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre) {
         const pool = await getConnection();
         const request = pool.request();

@@ -79,10 +79,57 @@ router.post("/Turnos/:id", async (req, res) => {
     const idDisponibilidad = req.params.id
     try{
         console.log(idDisponibilidad)
-        console.log("entree a turnos");
         await servicioService.crearTurnos(idDisponibilidad, Turnos);
         res.status(201).json({ message: 'Turnos creadas exitosamente' });
     } catch (error){
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get("/Disponibilidad/:id", async (req, res) => {
+    const idServicio = req.params.id;
+    const Dia = req.query.Dia;
+
+    try {
+        const response = await servicioService.ObtenerDisponibilidad(idServicio,Dia);
+        res.status(200).json({
+            message: 'Obtener Dispo',
+            data: response // Aquí se envía el objeto JSON obtenido de la base de datos
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get("/Turnos/:id", async (req, res) => {
+    const idServicio = req.params.id;
+    const Dia = req.query.Dia;
+
+    console.log(`ID del Servicio: ${idServicio}`);
+    console.log(`Día: ${Dia}`);
+
+    try {
+        const disponibilidad = await servicioService.ObtenerDisponibilidad(idServicio, Dia);
+        console.log('Resultados de Disponibilidad:', disponibilidad); // Imprimir todo el resultado
+
+        // Verificar si disponibilidad tiene resultados
+        if (disponibilidad && disponibilidad.length > 0) {
+            const disponibilidadId = disponibilidad[0].id; // Acceder al id del primer resultado
+            console.log(`ID de Disponibilidad: ${disponibilidadId}`); // Imprimir la ID
+            
+            const turnos = await servicioService.ObtenerTurnos(disponibilidadId);
+            console.log('Turnos obtenidos:', turnos); // Imprimir los turnos obtenidos
+
+            res.status(200).json({
+                message: 'Obtener turnos',
+                data: turnos
+            });
+        } else {
+            console.log('No se encontró disponibilidad para el idServicio y Dia dados');
+            res.status(404).json({ message: 'No se encontró disponibilidad' });
+        }
+    } catch (error) {
+        console.error('Error al obtener turnos:', error);
         res.status(500).json({ error: error.message });
     }
 });

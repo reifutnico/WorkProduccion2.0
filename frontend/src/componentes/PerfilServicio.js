@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import axios from "axios";
 import 'react-calendar/dist/Calendar.css';
-import '../css/PerfilServicio.css'; // Asegúrate de importar el CSS
-import { useParams } from 'react-router-dom'; // Importa useParams
+import '../css/PerfilServicio.css';
+import { useParams } from 'react-router-dom';
 
-// Mapeo de días de la semana en inglés
 const diasDeLaSemana = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-// Hook personalizado para obtener disponibilidad
-const useDisponibilidad = (id) => {
+const useDisponibilidad = (id, dia) => {
     const [disponibilidad, setDisponibilidad] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -17,49 +15,40 @@ const useDisponibilidad = (id) => {
     useEffect(() => {
         const obtenerHorarios = async () => {
             try {
-                console.log(`Fetching availability for id: ${id}`); // Log para verificar el id
-                const response = await axios.get(`http://localhost:5432/Disponibilidad/${id}`);
-                console.log("Horarios obtenidos:", response.data); // Log para verificar los datos obtenidos
-                setDisponibilidad(response.data);
-            } catch (err) {
-                console.log("Error al obtener horarios:", err.message); // Log del error
-                setError(err.message);
-            } finally {
+                console.log(id);
+                console.log(`Fetching availability for id: ${id} and day: ${dia}`);
+                const response = await axios.get(`http://localhost:5432/Servicio/Turnos/${id}?Dia=${dia}`);
+                console.log("Horarios obtenidos:", response.data);
+                setDisponibilidad(response.data.data || []);
+             } catch (err) {
+                    console.log("Error al obtener horarios:", err.response ? err.response.data : err.message);
+                    setError(err.response ? err.response.data.message : err.message);
+                }
+            finally { 
                 setLoading(false);
             }
         };
-
-        if (id) {
+        if (id && dia) {
             obtenerHorarios();
         }
-    }, [id]);
+    }, [id, dia]);
 
     return { disponibilidad, loading, error };
 };
 
-// Componente del calendario con disponibilidad
 const PerfilServicio = () => {
-    const { id } = useParams(); // Obtén idServicio de los parámetros de la URL
+    const { id } = useParams();
     const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
 
-    const { disponibilidad, loading, error } = useDisponibilidad(id);
+    const diaSeleccionado = diasDeLaSemana[fechaSeleccionada.getDay()];
+    const { disponibilidad, loading, error } = useDisponibilidad(id, diaSeleccionado);
 
-    // Función para manejar la selección de la fecha
     const handleDateChange = (date) => {
-        console.log("Fecha seleccionada:", date); // Log para verificar la fecha seleccionada
+        console.log("Fecha seleccionada:", date);
         setFechaSeleccionada(date);
     };
 
-    // Obtener el día de la semana de la fecha seleccionada
-    const diaSeleccionado = diasDeLaSemana[fechaSeleccionada.getDay()];
-    console.log("Día seleccionado:", diaSeleccionado); // Log para verificar el día de la semana
-
-    // Filtrar disponibilidad por el día seleccionado
-    const horariosFiltrados = disponibilidad.filter(
-        (horario) => horario.Dia === diaSeleccionado
-    );
-    console.log("Horarios filtrados:", horariosFiltrados); // Log para verificar los horarios filtrados
-
+    const horariosFiltrados = disponibilidad || [];
     return (
         <div className="calendar-container">
             <h2>Selecciona un día</h2>
@@ -77,17 +66,15 @@ const PerfilServicio = () => {
                             <tr>
                                 <th>Hora Desde</th>
                                 <th>Hora Hasta</th>
-                                <th>Duración del Turno</th>
-                                <th>Descanso</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody>
                             {horariosFiltrados.map((horario) => (
-                                <tr key={horario.id}>
-                                    <td>{new Date(horario.HoraDesde).toLocaleTimeString()}</td>
-                                    <td>{new Date(horario.HoraHasta).toLocaleTimeString()}</td>
-                                    <td>{new Date(horario.DuracionTurno).toLocaleTimeString()}</td>
-                                    <td>{new Date(horario.Descanso).toLocaleTimeString()}</td>
+                                <tr key={horario.comienzo}>
+                                    <td>{new Date(horario.comienzo).toLocaleTimeString()}</td>
+                                    <td>{new Date(horario.final).toLocaleTimeString()}</td>
+                                    <td>{horario.estado ? "Disponible" : "No disponible"}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -63,4 +63,22 @@ export default class ServicioService {
         }
     }
 
+    async ObtenerDisponibilidad(idServicio,Dia) {
+        try {
+            return await servicioRepository.ObtenerDisponibilidad(idServicio,Dia);
+        } catch (error) {
+           throw new Error('Error al crear disponibilidades');
+        }
+    }
+
+    
+    async ObtenerTurnos(idDisponibilidad){
+        try {
+            return await servicioRepository.ObtenerTurnos(idDisponibilidad);
+        } catch (error) {
+           throw new Error('Error al crear disponibilidades');
+        }
+    }
+
+
 }
