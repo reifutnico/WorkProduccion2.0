@@ -1,6 +1,5 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import '../css/Horario.css';
 import axios from 'axios';
 
@@ -36,99 +35,118 @@ const Horario = () => {
     };
 
     fetchSchedule();
-  }, [serviceId])
+  }, [serviceId]);
 
-  //Para el programa, hacer que la lista de abajo se actualize con la base de datos en vez del localstorage, y hacer la verificacion de los horarios en el frontend 
+  // Función para calcular los turnos disponibles
+  const calcularTurnos = (desde, hasta, duracion, descanso) => {
+    const turnos = [];
+    const desdeHora = new Date(`1970-01-01T${desde}:00Z`);
+    const hastaHora = new Date(`1970-01-01T${hasta}:00Z`);
+    const duracionTurno = new Date(`1970-01-01T${duracion}:00Z`);
+    const tiempoDescanso = new Date(`1970-01-01T${descanso}:00Z`);
 
-  const newDisponibilidad = async (e) => {
-    e.preventDefault(); // Previene el refresco de la página
-    let check = validateForm();
-    console.log(check);
-    if (check)  {
-      const Disponibilidades = {
-        Dia: selectedDay,
-        HoraDesde: fromTime,
-        HoraHasta: toTime,
-        DuracionTurno: shiftDuration,
-        Descanso: timeBetweenShifts
-      };
-      try {
-        console.log(Disponibilidades);
-        await axios.post(`http://localhost:5432/Servicio/Disponibilidades/${serviceId}`, Disponibilidades);
-        setSelectedDay('Lunes');
-        setFromTime('');
-        setToTime('');
-        setShiftDuration('');
-        setTimeBetweenShifts('')
-        handleConfirm()
+    let horaActual = new Date(desdeHora);
 
-      } catch (error) {
-        console.error('Error al agregar service:', error);
+    while (horaActual < hastaHora) {
+      const horaFinTurno = new Date(horaActual.getTime() + duracionTurno.getTime());
+
+      if (horaFinTurno <= hastaHora) {
+        turnos.push({
+          HoraDesde: horaActual.toISOString(),
+          HoraHasta: horaFinTurno.toISOString(),
+          DuracionTurno: duracion,
+          Descanso: descanso
+        });
+        horaActual = new Date(horaFinTurno.getTime() + tiempoDescanso.getTime());
+      } else {
+        break;
       }
     }
+
+    return turnos;
   };
-  
-  const NextPage = async (e) => {
-    e.preventDefault(); // Previene el refresco de la página
-    navigate(`/`)
-  };
-
-
-const validateForm = () => {
-  let formErrors = {};
-
-  if (!selectedDay) formErrors.selectedDay = "El Dia es requerido.";
-  if (!fromTime)formErrors.fromTime = "El tiempo Desde es requerido.";
-  if (!toTime) formErrors.toTime = "El tiempo Hasta es requerido.";
-  if (!shiftDuration) formErrors.shiftDuration = "El tiempo de duracion es requerido";
-  if (!timeBetweenShifts) formErrors.timeBetweenShifts = "El tiempo entre turnos es requerido";
-
-  setErrors(formErrors);
-
-  return Object.keys(formErrors).length === 0;
-};
 
   const handleConfirm = () => {
     let updatedSchedule = [...schedule];
     let existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
 
-    if (fromTime && toTime) {
+    if (fromTime && toTime && shiftDuration && timeBetweenShifts) {
+      const turnosCalculados = calcularTurnos(fromTime, toTime, shiftDuration, timeBetweenShifts);
+
       if (existingDayIndex !== -1) {
-        // Si ya existe el día en el schedule, agregamos el nuevo rango de horario
-        updatedSchedule[existingDayIndex].ranges.push({ from: fromTime, to: toTime });
+        // Si ya existe el día en el schedule, reemplaza los turnos
+        updatedSchedule[existingDayIndex].ranges = turnosCalculados;
         updatedSchedule[existingDayIndex].shiftDuration = shiftDuration;
         updatedSchedule[existingDayIndex].timeBetweenShifts = timeBetweenShifts;
       } else {
-        // Si no existe, creamos un nuevo objeto para ese día
+        // Si no existe, crea un nuevo objeto para ese día
         updatedSchedule.push({
           day: selectedDay,
-          ranges: [{ from: fromTime, to: toTime }],
+          ranges: turnosCalculados,
           shiftDuration: shiftDuration,
           timeBetweenShifts: timeBetweenShifts
         });
       }
+      
       setSchedule(updatedSchedule);
       setFromTime('');
       setToTime('');
     }
   };
-    
+
+  const newDisponibilidad = async (e) => {
+    e.preventDefault();
+    let check = validateForm();
+    if (check) {
+      try {
+        console.log("Enviando disponibilidad...");
+        await axios.post(`http://localhost:5432/Servicio/Disponibilidades/${serviceId}`, schedule);
+        setSelectedDay('Lunes');
+        setFromTime('');
+        setToTime('');
+        setShiftDuration('');
+        setTimeBetweenShifts('');
+        handleConfirm();
+      } catch (error) {
+        console.error('Error al agregar disponibilidad:', error);
+      }
+    }
+  };
+
+  const NextPage = async (e) => {
+    e.preventDefault(); // Previene el refresco de la página
+    navigate(`/`);
+  };
+
+  const validateForm = () => {
+    let formErrors = {};
+
+    if (!selectedDay) formErrors.selectedDay = "El Dia es requerido.";
+    if (!fromTime) formErrors.fromTime = "El tiempo Desde es requerido.";
+    if (!toTime) formErrors.toTime = "El tiempo Hasta es requerido.";
+    if (!shiftDuration) formErrors.shiftDuration = "El tiempo de duracion es requerido";
+    if (!timeBetweenShifts) formErrors.timeBetweenShifts = "El tiempo entre turnos es requerido";
+
+    setErrors(formErrors);
+
+    return Object.keys(formErrors).length === 0;
+  };
+
   return (
-    
     <div className="horario-container">
       <h1>Disponibilidad horaria</h1>
       <p>Seleccionar los horarios en los que ofreces tu servicio</p>
       <div className="time-inputs">
-      <div className="dropdown">
-        <button className="dropbtn">{selectedDay}</button>
-        <div className="dropdown-content">
-          {daysOfWeek.map(day => (
-            <button key={day} onClick={() => setSelectedDay(day)}>
-              {day}
-            </button>
-          ))}
+        <div className="dropdown">
+          <button className="dropbtn">{selectedDay}</button>
+          <div className="dropdown-content">
+            {daysOfWeek.map(day => (
+              <button key={day} onClick={() => setSelectedDay(day)}>
+                {day}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
         <div>
           <label>Desde</label>
           <input type="time" value={fromTime} onChange={(e) => setFromTime(e.target.value)} />
@@ -161,10 +179,6 @@ const validateForm = () => {
         </div>
       </div>
       <button onClick={newDisponibilidad}>Confirmar</button>
-     
-     
-
-
       <div className="schedule-summary">
         <h2>Resumen de horarios confirmados</h2>
         <ul>
@@ -173,7 +187,7 @@ const validateForm = () => {
               <strong>{day}:</strong>
               {ranges.map((range, idx) => (
                 <span key={idx}>
-                  {range.from} - {range.to}
+                  {new Date(range.HoraDesde).toLocaleTimeString()} - {new Date(range.HoraHasta).toLocaleTimeString()}
                   {idx !== ranges.length - 1 ? <br /> : ''}
                 </span>
               ))}
@@ -188,6 +202,5 @@ const validateForm = () => {
     </div>
   );
 }
-
 
 export default Horario;
