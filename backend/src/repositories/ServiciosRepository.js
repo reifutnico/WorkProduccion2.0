@@ -103,6 +103,7 @@ export default class ServicioRepository {
     async crearDisponibilidades(idServicio, Disponibilidades) {
         const pool = await getConnection();
         const transaction = new sql.Transaction(pool);
+        console.log("a")
         try {
             await transaction.begin();
             const request = transaction.request();
@@ -169,13 +170,12 @@ export default class ServicioRepository {
                     .input('comienzo', sql.VarChar, turno.start)
                     .input('final', sql.VarChar, turno.end)
                     .input('idDisponibilidad', sql.Int, idDisponibilidad)
-                    .input('completado', sql.Bit, false)
                     .query(`
-                        INSERT INTO Turnos (comienzo, final, idDisponibilidad, estado)
-                        VALUES (@comienzo, @final, @idDisponibilidad, @completado);
+                        INSERT INTO Turnos (comienzo, final, idDisponibilidad)
+                        VALUES (@comienzo, @final, @idDisponibilidad);
                     `);
             }
-    
+            console.log('a')
             await transaction.commit();
             console.log('Turnos insertados correctamente.');
         } catch (err) {
@@ -308,11 +308,9 @@ export default class ServicioRepository {
     async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre) {
         const pool = await getConnection();
         const request = pool.request();
-        var query = `SELECT s.id, idCreador, idCategoria, s.Nombre, Descripcion, Foto, Precio, c.Nombre AS CategoriaNombre, u.Nombre AS CreadorNombre, COUNT(sc.idServicio) AS cantidad_contratos
+        var query = `SELECT s.id, idCreador, idCategoria, s.Nombre, Descripcion, Foto, Precio, c.Nombre AS CategoriaNombre, u.Nombre AS CreadorNombre
         FROM
         Servicios s
-        LEFT JOIN
-        ServiciosContratados sc ON s.id = sc.idServicio
         INNER JOIN Categorias c on s.idCategoria = c.id
         INNER JOIN Usuarios u on s.idCreador = u.id
         GROUP BY
@@ -333,8 +331,6 @@ export default class ServicioRepository {
         if (query.endsWith(' HAVING ')) {
             query = query.slice(0, -7);
         }
-        query += ` ORDER BY cantidad_contratos DESC`;
-
         console.log(query);
         const { recordset } = await request.query(query);
         return recordset;

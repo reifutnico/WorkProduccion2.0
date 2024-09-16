@@ -1,11 +1,10 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import '../css/Horario.css';
 import axios from 'axios';
 
 const Horario = () => {
-  const [selectedDay, setSelectedDay] = useState('Lunes');
+  const [selectedDay, setSelectedDay] = useState('Monday');
   const [fromTime, setFromTime] = useState('');
   const [toTime, setToTime] = useState('');
   const [shiftDuration, setShiftDuration] = useState('');
@@ -14,9 +13,10 @@ const Horario = () => {
   const [serviceId, setServiceId] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
-  const daysOfWeek = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
   const location = useLocation();
+
+  // Lista de días en inglés
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -36,9 +36,7 @@ const Horario = () => {
     };
 
     fetchSchedule();
-  }, [serviceId])
-
-  //Para el programa, hacer que la lista de abajo se actualize con la base de datos en vez del localstorage, y hacer la verificacion de los horarios en el frontend 
+  }, [serviceId]);
 
   const newDisponibilidad = async (e) => {
     e.preventDefault(); // Previene el refresco de la página
@@ -55,38 +53,37 @@ const Horario = () => {
       try {
         console.log(Disponibilidades);
         await axios.post(`http://localhost:5432/Servicio/Disponibilidades/${serviceId}`, Disponibilidades);
-        setSelectedDay('Lunes');
+        setSelectedDay('Monday');
         setFromTime('');
         setToTime('');
         setShiftDuration('');
-        setTimeBetweenShifts('')
-        handleConfirm()
+        setTimeBetweenShifts('');
+        handleConfirm();
 
       } catch (error) {
         console.error('Error al agregar service:', error);
       }
     }
   };
-  
+
   const NextPage = async (e) => {
     e.preventDefault(); // Previene el refresco de la página
-    navigate(`/`)
+    navigate(`/`);
   };
 
+  const validateForm = () => {
+    let formErrors = {};
 
-const validateForm = () => {
-  let formErrors = {};
+    if (!selectedDay) formErrors.selectedDay = "El Dia es requerido.";
+    if (!fromTime) formErrors.fromTime = "El tiempo Desde es requerido.";
+    if (!toTime) formErrors.toTime = "El tiempo Hasta es requerido.";
+    if (!shiftDuration) formErrors.shiftDuration = "El tiempo de duracion es requerido";
+    if (!timeBetweenShifts) formErrors.timeBetweenShifts = "El tiempo entre turnos es requerido";
 
-  if (!selectedDay) formErrors.selectedDay = "El Dia es requerido.";
-  if (!fromTime)formErrors.fromTime = "El tiempo Desde es requerido.";
-  if (!toTime) formErrors.toTime = "El tiempo Hasta es requerido.";
-  if (!shiftDuration) formErrors.shiftDuration = "El tiempo de duracion es requerido";
-  if (!timeBetweenShifts) formErrors.timeBetweenShifts = "El tiempo entre turnos es requerido";
+    setErrors(formErrors);
 
-  setErrors(formErrors);
-
-  return Object.keys(formErrors).length === 0;
-};
+    return Object.keys(formErrors).length === 0;
+  };
 
   const handleConfirm = () => {
     let updatedSchedule = [...schedule];
@@ -112,23 +109,12 @@ const validateForm = () => {
       setToTime('');
     }
   };
-    
+
   return (
-    
     <div className="horario-container">
       <h1>Disponibilidad horaria</h1>
       <p>Seleccionar los horarios en los que ofreces tu servicio</p>
       <div className="time-inputs">
-      <div className="dropdown">
-        <button className="dropbtn">{selectedDay}</button>
-        <div className="dropdown-content">
-          {daysOfWeek.map(day => (
-            <button key={day} onClick={() => setSelectedDay(day)}>
-              {day}
-            </button>
-          ))}
-        </div>
-      </div>
         <div>
           <label>Desde</label>
           <input type="time" value={fromTime} onChange={(e) => setFromTime(e.target.value)} />
@@ -160,11 +146,17 @@ const validateForm = () => {
           {errors.timeBetweenShifts && <p className="error-text">{errors.timeBetweenShifts}</p>}
         </div>
       </div>
+      <div className="day-selector">
+        <label>Día:</label>
+        <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)}>
+          {daysOfWeek.map(day => (
+            <option key={day} value={day}>
+              {day}
+            </option>
+          ))}
+        </select>
+      </div>
       <button onClick={newDisponibilidad}>Confirmar</button>
-     
-     
-
-
       <div className="schedule-summary">
         <h2>Resumen de horarios confirmados</h2>
         <ul>
@@ -188,6 +180,5 @@ const validateForm = () => {
     </div>
   );
 }
-
 
 export default Horario;
