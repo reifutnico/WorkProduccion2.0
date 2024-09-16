@@ -80,5 +80,21 @@ export default class ServicioService {
         }
     }
 
+    async crearReserva(idTurno, fechaReserva){
+        try {
+            return await servicioRepository.crearReserva(idTurno, fechaReserva);
+        } catch (error) {
+           throw new Error('Error al en el estado');
+        }
+    }
+    
+    async obtenerReservas(idTurno, fecha){
+        try {
+            return await servicioRepository.obtenerReservas(idTurno, fecha);
+        } catch (error) {
+           throw new Error('Error al en el estado');
+        }
+    }
+    
 
 }

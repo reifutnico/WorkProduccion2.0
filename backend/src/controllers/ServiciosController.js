@@ -134,5 +134,41 @@ router.get("/Turnos/:id", async (req, res) => {
     }
 });
 
+router.post("/Turnos/:id/reservar", async (req, res) => {
+    const idTurno = req.params.id;
+    const fechaReserva = req.body.fechaReserva; // Recibe la fecha de reserva del cuerpo de la solicitud
+
+    try {
+        const result = await servicioService.crearReserva(idTurno, fechaReserva);
+        res.status(200).json({ result });
+    } catch (error) {
+        console.error('Error al crear reserva:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get("/TurnosReservados/:id", async (req, res) => {
+    const idTurno = req.params.id;
+    const fecha = req.query.Fecha; // Obtiene la fecha en formato YYYY-MM-DD
+
+    console.log('ID Turno recibido:', idTurno);
+    console.log('Fecha recibida:', fecha);
+
+    try {
+        const reservas = await servicioService.obtenerReservas(idTurno, fecha);
+
+        // Verifica los datos obtenidos y enviados
+        console.log('Reservas obtenidas:', reservas);
+
+        res.status(200).json({ data: reservas });
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
 
 export default router;

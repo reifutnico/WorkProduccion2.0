@@ -193,7 +193,7 @@ export default class ServicioRepository {
         try {
             // Consulta para obtener los turnos asociados al idDisponibilidad
             const query = `
-                SELECT comienzo, final, estado
+                SELECT *
                 FROM Turnos
                 WHERE idDisponibilidad = @idDisponibilidad
                 ORDER BY comienzo;
@@ -213,6 +213,32 @@ export default class ServicioRepository {
     }
 
     
+    
+
+    async crearReserva(idTurno, fechaReserva) {
+        const pool = await getConnection();
+        const request = pool.request();
+    
+        try {
+            const query = `
+                INSERT INTO turnosReservados (idTurno, fecha)
+                VALUES (@idTurno, @fechaReserva)
+            `;
+            // Ejecutar la consulta
+            request.input('idTurno', sql.Int, idTurno);
+            request.input('fechaReserva', sql.Date, fechaReserva);
+            await request.query(query);
+            return { success: true };
+        } catch (error) {
+            console.error('Error al crear reserva:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+    
+    
+
     async ObtenerDisponibilidad(idServicio, Dia) {
         const pool = await getConnection();
         const request = pool.request();
@@ -243,6 +269,40 @@ export default class ServicioRepository {
             pool.close();
         }
     }
+
+    async  obtenerReservas(idTurno, fecha) {
+        const pool = await getConnection();
+        const request = pool.request();
+    
+        try {
+            // Verifica los valores de entrada
+            console.log('ID Turno:', idTurno);
+            console.log('Fecha:', fecha);
+    
+            const query = `
+                SELECT * FROM turnosReservados
+                WHERE idTurno = @idTurno AND CAST(fecha AS DATE) = @fecha
+            `;
+            request.input('idTurno', sql.Int, idTurno);
+            request.input('fecha', sql.Date, fecha);
+    
+            console.log('Ejecutando consulta SQL:', query);
+    
+            const result = await request.query(query);
+    
+            // Verifica los resultados obtenidos
+            console.log('Resultados de la consulta:', result.recordset);
+    
+            return result.recordset;
+        } catch (error) {
+            console.error('Error al obtener reservas:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+    
+    
     
     
     async BuscarServicioPorNombre(Nombre, CategoriaNombre, UsuarioNombre) {
@@ -279,4 +339,6 @@ export default class ServicioRepository {
         const { recordset } = await request.query(query);
         return recordset;
     }
+
+    
 }
