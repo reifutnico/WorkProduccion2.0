@@ -43,16 +43,21 @@ router.get("/login/token", async (request, response) => {
 
 
   const transporter = nodemailer.createTransport({
-    service: 'Gmail', // Usa el servicio que prefieras
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
         user: "botworky@gmail.com",
-        pass: "oizt npwu btgd rerv", 
+        pass: "svak yhbh fusu glhl",
     },
+    connectionTimeout: 10000, // 10 segundos
+    greetingTimeout: 5000,    // 5 segundos
 });
+
 
   const sendEmail = async (to, subject, text) => {
     const mailOptions = {
-        from: "botworky.rae@gmail.com",
+        from: "botworky@gmail.com",
         to: to,
         subject: subject,
         text: text,
@@ -90,7 +95,7 @@ router.post("/register", async (request, response) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     const phoneRegex = /^[0-9]{10,15}$/; // Regex para validar el teléfono (puedes ajustarlo según tus necesidades)
     const photoRegex = /\.(jpg|jpeg)$/i; 
-    
+
     // Validaciones de campos obligatorios
     if (!username || !email || !password) {
         return response.status(400).json({ error: "There is an empty field" });

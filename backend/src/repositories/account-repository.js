@@ -59,11 +59,11 @@ export default class AccountRepository {
                 ) 
                 OUTPUT inserted.*
                 VALUES (@verificadoPrestador, @verificadoContratador, @Nombre, @password, @mail, @telefono, @fechaNacimiento, @miembro, @fotoPerfil)`;
-    
+
                 request.input('verificadoPrestador', sql.Bit, false);
                 request.input('verificadoContratador', sql.Bit, false);
                 request.input('Nombre', sql.VarChar(50), username);
-                request.input('password', sql.NChar(10), hashedPassword);  // Asegúrate que la longitud sea correcta
+                request.input('password', sql.VarChar(255), hashedPassword);  // Asegúrate que la longitud sea correcta
                 request.input('mail', sql.VarChar(50), email);
                 request.input('telefono', sql.VarChar(22), telefono);
                 request.input('fechaNacimiento', sql.Date, fechaNacimiento);
