@@ -6,11 +6,10 @@
   padding: 10px;
 }
 
-.navbar-logo a {
-  font-family: 'Roboto', sans-serif;
-  font-size: 26px;
-  font-weight: bold;
-  color: #333;
+.navbar-logo-img {
+  height: 55px; /* Ajusta la altura del logo */
+  width: auto;  /* Mantiene la proporción original */
+  object-fit: contain; /* Asegura que la imagen se ajuste sin deformarse */
 }
 
 .navbar-menu {

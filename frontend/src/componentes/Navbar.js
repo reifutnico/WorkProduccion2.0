@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../css/Navbar.css';
+import logo from '../img/worky_logo.png';  // Importa el logo
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(null);
@@ -42,7 +43,9 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">worky.</Link>
+        <Link to="/">
+          <img src={logo} alt="Worky Logo" className="navbar-logo-img" /> {/* Usa el logo importado */}
+        </Link>
       </div>
       <ul className="navbar-menu">
         {categoriasMadre.map((categoria) => (
