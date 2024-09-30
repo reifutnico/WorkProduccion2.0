@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../css/Navbar.css';
-import logo from '../img/worky_logo.png';  // Importa el logo
+import logo from '../img/worky_logo.png'; 
+import Modal from './modal'; 
+import Login from './login'; // Importa el componente Login
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(null);
@@ -40,6 +42,8 @@ const Navbar = () => {
     setDropdown(null);
   };
 
+  const [isLoginOpen, setLoginOpen] = useState(false);
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">
@@ -67,9 +71,17 @@ const Navbar = () => {
         ))}
       </ul>
       <div className="navbar-buttons">
-        <button className="login-btn">Login</button>
-        <button className="signup-btn">Signup</button>
-      </div>
+                    {/* Botón de Login abre el modal */}
+                    <button className="login-btn" onClick={() => setLoginOpen(true)}>Login</button>
+                    
+                    {/* Botón de Register redirige a la página de registro */}
+                    <Link to="/register">
+                        <button className="signup-btn">Register</button>
+                    </Link>
+                </div>
+            <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
+                <Login />
+            </Modal>
     </nav>
   );
 }

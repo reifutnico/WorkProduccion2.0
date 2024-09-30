@@ -1,0 +1,75 @@
+
+:root {
+    --modal-bg: rgba(226, 223, 223, 0.26);
+    --modal-content-bg: #ffffff;
+    --modal-border-radius: 12px;
+    --modal-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    --button-bg: #007bff;
+    --button-hover-bg: #0056b3;
+    --transition-speed: 0.3s;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    inset: 0; /* Shorthand for top, right, bottom, left: 0 */
+    background: var(--modal-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+  }
+  
+  .modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .modal-content {
+
+    border-radius: var(--modal-border-radius);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: var(--modal-shadow);
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
+  }
+  
+  .modal-overlay.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .modal-content button {
+    margin-top: 1.5rem;
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+  
+  .modal-content button:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-1px);
+  }
+  
+  .modal-content button:active {
+    transform: translateY(1px);
+  }
+  
+  body.modal-open {
+    overflow: hidden;
+  }
+  
+  @media (max-width: 480px) {
+    .modal-content {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  }
