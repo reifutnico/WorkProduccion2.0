@@ -43,15 +43,12 @@ router.get("/login/token", async (request, response) => {
 
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    service: 'Gmail', // Usa el servicio que prefieras
     auth: {
         user: "botworky@gmail.com",
         pass: "svak yhbh fusu glhl",
     },
-    connectionTimeout: 10000, // 10 segundos
-    greetingTimeout: 5000,    // 5 segundos
+
 });
 
 
@@ -77,7 +74,7 @@ router.get('/confirm/:token', async (req, res) => {
         const email = decoded.email;
         const user = await AccountSrv.getPendingUser(email);
         if (user) {
-            await AccountSrv.registerUser(user.nombre,user.mail,user.telefono,user.fechaNacimiento,user.password);
+            await AccountSrv.registerUser(user.Nombre,user.mail,user.telefono,user.fechaNacimiento,user.password);
             return res.status(200).json({ message: "Your account has been confirmed!" });
         } else {
             return res.status(400).json({ error: "No pending account found." });

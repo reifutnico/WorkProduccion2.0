@@ -28,8 +28,8 @@ export default class AccountRepository {
                 INSERT INTO Usuarios (
                     verificadoPrestador, verificadoContratador, Nombre, password, mail, telefono, fechaNacimiento, miembro
                 ) 
-                VALUES (@verificadoPrestador, @verificadoContratador, @Nombre, @password, @mail, @telefono, @fechaNacimiento, @miembro)
-                RETURNING *`;
+                OUTPUT inserted.*
+                VALUES (@verificadoPrestador, @verificadoContratador, @Nombre, @password, @mail, @telefono, @fechaNacimiento, @miembro)`;
 
             request.input('verificadoPrestador', sql.Bit, false);
             request.input('verificadoContratador', sql.Bit, false);
@@ -82,7 +82,7 @@ export default class AccountRepository {
         const request = await pool.request();
         
         try {
-            const sqlQuery = 'DELETE FROM pending_users WHERE email = @email';
+            const sqlQuery = 'DELETE FROM pending_users WHERE mail = @email';
             request.input('email', sql.VarChar(255), email);
             await request.query(sqlQuery);
         } catch (error) {
@@ -96,7 +96,7 @@ export default class AccountRepository {
         const request = await pool.request();
         
         try {
-            const sqlQuery = 'SELECT * FROM pending_users WHERE email = @email';
+            const sqlQuery = 'SELECT * FROM pending_users WHERE mail = @email';
             request.input('email', sql.VarChar(255), email);
             const { recordset } = await request.query(sqlQuery);
             return recordset.length > 0 ? recordset[0] : null;
