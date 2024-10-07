@@ -25,11 +25,7 @@ export default class ServicioService {
         }
     }
     async CrearServicio(servicio) {
-        try {
             return await servicioRepository.CrearServicio(servicio);
-        } catch (error) {
-            throw new Error('Error al crear servicio');
-        }
     }
     async EditarDisponibilidad(disponibilidad) {
         try {

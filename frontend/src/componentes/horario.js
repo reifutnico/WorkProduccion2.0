@@ -127,25 +127,40 @@ const Horario = () => {
         {errors.toTime && <p className="error-text">{errors.toTime}</p>}
       </div>
       <div className="shift-details">
-        <div>
-          <label>Duración del turno:</label>
-          <input
-            type="time"
-            value={shiftDuration}
-            onChange={(e) => setShiftDuration(e.target.value)}
-          />
-          {errors.shiftDuration && <p className="error-text">{errors.shiftDuration}</p>}
-        </div>
-        <div>
-          <label>Tiempo entre turnos:</label>
-          <input
-            type="time"
-            value={timeBetweenShifts}
-            onChange={(e) => setTimeBetweenShifts(e.target.value)}
-          />
-          {errors.timeBetweenShifts && <p className="error-text">{errors.timeBetweenShifts}</p>}
-        </div>
-      </div>
+  <div>
+    <label>Duración del turno:</label>
+    <select value={shiftDuration} onChange={(e) => setShiftDuration(e.target.value)}>
+      {/* Opciones en intervalos de 30 minutos */}
+      <option value="00:30">00:30</option>
+      <option value="01:00">01:00</option>
+      <option value="01:30">01:30</option>
+      <option value="02:00">02:00</option>
+      <option value="02:30">02:30</option>
+      <option value="03:00">03:00</option>
+      {/* Puedes agregar más si es necesario */}
+    </select>
+    {errors.shiftDuration && <p className="error-text">{errors.shiftDuration}</p>}
+  </div>
+  <div>
+    <label>Tiempo entre turnos:</label>
+    <select value={timeBetweenShifts} onChange={(e) => setTimeBetweenShifts(e.target.value)}>
+      {/* Opciones en intervalos de 15 minutos */}
+      <option value="00:15">00:15</option>
+      <option value="00:30">00:30</option>
+      <option value="00:45">00:45</option>
+      <option value="01:00">01:15</option>
+      <option value="01:00">01:30</option>
+      <option value="01:00">02:00</option>
+      <option value="01:00">02:00</option>
+      <option value="01:00">02:00</option>
+      <option value="01:00">02:00</option>
+
+      {/* Puedes agregar más si es necesario */}
+    </select>
+    {errors.timeBetweenShifts && <p className="error-text">{errors.timeBetweenShifts}</p>}
+  </div>
+</div>
+
       <div className="day-selector">
         <label>Día:</label>
         <select value={selectedDay} onChange={(e) => setSelectedDay(e.target.value)}>

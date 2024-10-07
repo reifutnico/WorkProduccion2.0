@@ -24,7 +24,7 @@ const CreateService = ({ setService }) => {
       try {
         const categoria = await axios.get('http://localhost:5432/Categoria/', {
           params: {
-            Nombre: NewCategoria,
+            Nombre: NewCategoria,   
           },
         });
         console.log(categoria);
@@ -33,7 +33,6 @@ const CreateService = ({ setService }) => {
           window.location.reload();
         } else {
           const idCategoria = categoria.data[0].id;
-          console.log(idCategoria + 'ssssss');
           const newService = {
             idCreador: 1,
             idCategoria: idCategoria,
@@ -42,7 +41,7 @@ const CreateService = ({ setService }) => {
             Foto: image.name,
             Precio: NewPrecio,
           };
-          console.log(newService);
+          console.log(newService + "aa");
           const response = await axios.post('http://localhost:5432/Servicio', newService);
           const idServicio = response.data.id;
           console.log(idServicio + 'ssssss');
