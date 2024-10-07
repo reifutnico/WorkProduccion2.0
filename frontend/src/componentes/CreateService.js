@@ -9,22 +9,16 @@ const CreateService = ({ setService }) => {
   const [NewCategoria, setNewCategoria] = useState('');
   const [NewModalidad, setNewModalidad] = useState('presencial');
   const [NewDescripcion, setNewDescripcion] = useState('');
-  
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
-  
   const [categorias, setCategorias] = useState([]);
-  const [filteredCategorias, setFilteredCategorias] = useState([]);
-  
   const navigate = useNavigate();
-  
-  // Llamada a la API para obtener las categorías solo una vez
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
         const response = await axios.get('http://localhost:5432/Categoria');
-        setCategorias(response.data); // Guardar todas las categorías en el estado
+        setCategorias(response.data);
       } catch (error) {
         console.error('Error al obtener categorías:', error);
       }
@@ -32,17 +26,6 @@ const CreateService = ({ setService }) => {
     
     fetchCategorias();
   }, []);
-  
-  // Filtrar categorías mientras se escribe
-  const handleCategoriaChange = (e) => {
-    const value = e.target.value;
-    setNewCategoria(value);
-    
-    const filtered = categorias.filter((categoria) =>
-      categoria.Nombre.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredCategorias(filtered); // Actualizar la lista de categorías filtradas
-  };
   
   const addService = async (e) => {
     e.preventDefault();
