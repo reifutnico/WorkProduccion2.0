@@ -21,44 +21,23 @@
 
 .navbar-item {
   position: relative;
+  padding: 0 15px; /* Añade espacio entre los elementos */
+  cursor: pointer; /* Añade un cursor pointer para indicar que es clicable */
 }
 
-.navbar-item a {
+.navbar-item span {
   font-family: 'Roboto', sans-serif;
   font-size: 18px;
   padding: 10px;
   color: #333;
   text-decoration: none;
   transition: color 0.3s ease;
+  cursor: pointer; /* Asegura que haya un cursor pointer */
 }
 
-.navbar-item a:hover {
+.navbar-item span:hover {
   color: #008000;
   border-bottom: 2px solid #008000;
-}
-
-.dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #ffffff;
-  border: 1px solid #555;
-  z-index: 1000;
-}
-
-.navbar-item:hover .dropdown {
-  display: block;
-}
-
-.dropdown a {
-  color: #000;
-  padding: 10px;
-  text-decoration: none;
-}
-
-.dropdown a:hover {
-  background-color: #f0f0f0;
 }
 
 .navbar-buttons {
