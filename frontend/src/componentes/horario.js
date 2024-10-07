@@ -149,11 +149,11 @@ const Horario = () => {
       <option value="00:30">00:30</option>
       <option value="00:45">00:45</option>
       <option value="01:00">01:15</option>
-      <option value="01:00">01:30</option>
-      <option value="01:00">02:00</option>
-      <option value="01:00">02:00</option>
-      <option value="01:00">02:00</option>
-      <option value="01:00">02:00</option>
+      <option value="0:00">01:30</option>
+      <option value="02:15">02:15</option>
+      <option value="02:30">02:30</option>
+      <option value="02:45">02:45</option>
+      <option value="03:00">03:00</option>
 
       {/* Puedes agregar más si es necesario */}
     </select>
