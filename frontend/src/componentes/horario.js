@@ -12,6 +12,8 @@ const Horario = () => {
   const [schedule, setSchedule] = useState([]);
   const [serviceId, setServiceId] = useState(null);
   const [errors, setErrors] = useState({});
+  const [maxShiftDuration, setMaxShiftDuration] = useState('');
+  const [maxTimeBetweenShifts, setMaxTimeBetweenShifts] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -85,6 +87,45 @@ const Horario = () => {
     return Object.keys(formErrors).length === 0;
   };
 
+  const handleFromTimeChange = (e) => {
+    setFromTime(formatTime(e.target.value));
+    setToTime(''); // Resetear el campo "Hasta"
+    setShiftDuration('');
+    setTimeBetweenShifts('');
+    setMaxShiftDuration('');
+    setMaxTimeBetweenShifts('');
+  };
+  
+  const handleToTimeChange = (e) => {
+    const formattedTime = formatTime(e.target.value);
+    setToTime(formattedTime);
+    
+    const fromDate = new Date(`1970-01-01T${fromTime}:00`);
+    const toDate = new Date(`1970-01-01T${formattedTime}:00`);
+    if (fromDate >= toDate) {
+      setErrors((prev) => ({ ...prev, toTime: "El tiempo Hasta debe ser mayor que el tiempo Desde." }));
+      setMaxShiftDuration('');
+      return;
+    } else {
+      setErrors((prev) => ({ ...prev, toTime: undefined }));
+    }
+  
+    const diffInHours = (toDate - fromDate) / (1000 * 60 * 60);
+    setMaxShiftDuration(diffInHours);
+  };
+
+  const handleShiftDurationChange = (e) => {
+    setShiftDuration(e.target.value);
+    const remainingHours = maxShiftDuration - parseFloat(e.target.value);
+    setMaxTimeBetweenShifts(remainingHours);
+  };
+
+  const formatTime = (hours) => {
+    const hourPart = Math.floor(hours);
+    const minutePart = Math.round((hours % 1) * 60); // Usar Math.round para evitar problemas de precisión
+    return `${hourPart.toString().padStart(2, '0')}:${minutePart.toString().padStart(2, '0')}`;
+  };
+
   const handleConfirm = () => {
     let updatedSchedule = [...schedule];
     let existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
@@ -117,49 +158,58 @@ const Horario = () => {
       <div className="time-inputs">
         <div>
           <label>Desde</label>
-          <input type="time" value={fromTime} onChange={(e) => setFromTime(e.target.value)} />
+          <input type="time" value={fromTime} onChange={handleFromTimeChange} />
         </div>
         {errors.fromTime && <p className="error-text">{errors.fromTime}</p>}
         <div>
           <label>Hasta</label>
-          <input type="time" value={toTime} onChange={(e) => setToTime(e.target.value)} />
+          <input
+            type="time"
+            value={toTime}
+            onChange={handleToTimeChange}
+            disabled={!fromTime}
+          />
         </div>
         {errors.toTime && <p className="error-text">{errors.toTime}</p>}
       </div>
       <div className="shift-details">
-  <div>
-    <label>Duración del turno:</label>
-    <select value={shiftDuration} onChange={(e) => setShiftDuration(e.target.value)}>
-      {/* Opciones en intervalos de 30 minutos */}
-      <option value="00:30">00:30</option>
-      <option value="01:00">01:00</option>
-      <option value="01:30">01:30</option>
-      <option value="02:00">02:00</option>
-      <option value="02:30">02:30</option>
-      <option value="03:00">03:00</option>
-      {/* Puedes agregar más si es necesario */}
-    </select>
-    {errors.shiftDuration && <p className="error-text">{errors.shiftDuration}</p>}
-  </div>
-  <div>
-    <label>Tiempo entre turnos:</label>
-    <select value={timeBetweenShifts} onChange={(e) => setTimeBetweenShifts(e.target.value)}>
-      {/* Opciones en intervalos de 15 minutos */}
-      <option value="00:15">00:15</option>
-      <option value="00:30">00:30</option>
-      <option value="00:45">00:45</option>
-      <option value="01:00">01:15</option>
-      <option value="0:00">01:30</option>
-      <option value="02:15">02:15</option>
-      <option value="02:30">02:30</option>
-      <option value="02:45">02:45</option>
-      <option value="03:00">03:00</option>
-
-      {/* Puedes agregar más si es necesario */}
-    </select>
-    {errors.timeBetweenShifts && <p className="error-text">{errors.timeBetweenShifts}</p>}
-  </div>
-</div>
+        <div>
+          <label>Duración del turno:</label>
+          <select
+            value={shiftDuration}
+            onChange={handleShiftDurationChange}
+            disabled={!toTime}
+          >
+            {[...Array(Math.floor(maxShiftDuration * 2))].map((_, i) => {
+              const hours = (i + 1) / 2;
+              return (
+                <option key={hours} value={hours.toFixed(2)}>
+                  {formatTime(hours)}  {/* Asegúrate de usar la función formatTime aquí */}
+                </option>
+              );
+            })}
+          </select>
+          {errors.shiftDuration && <p className="error-text">{errors.shiftDuration}</p>}
+        </div>
+        <div>
+          <label>Tiempo entre turnos:</label>
+          <select
+            value={timeBetweenShifts}
+            onChange={(e) => setTimeBetweenShifts(e.target.value)}
+            disabled={!shiftDuration}
+          >
+            {[...Array(Math.floor(maxTimeBetweenShifts * 4))].map((_, i) => {
+              const interval = (i + 1) / 4;
+              return (
+                <option key={interval} value={interval.toFixed(2)}>
+                  {formatTime(interval)}  {/* Asegúrate de usar la función formatTime aquí */}
+                </option>
+              );
+            })}
+          </select>
+          {errors.timeBetweenShifts && <p className="error-text">{errors.timeBetweenShifts}</p>}
+        </div>
+      </div>
 
       <div className="day-selector">
         <label>Día:</label>
@@ -171,7 +221,9 @@ const Horario = () => {
           ))}
         </select>
       </div>
+      
       <button onClick={newDisponibilidad}>Confirmar</button>
+
       <div className="schedule-summary">
         <h2>Resumen de horarios confirmados</h2>
         <ul>
