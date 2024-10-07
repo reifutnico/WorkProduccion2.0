@@ -88,28 +88,28 @@ const Horario = () => {
   };
 
   const handleFromTimeChange = (e) => {
-    setFromTime(formatTime(e.target.value));
+    setFromTime(e.target.value);
     setToTime(''); // Resetear el campo "Hasta"
     setShiftDuration('');
     setTimeBetweenShifts('');
     setMaxShiftDuration('');
     setMaxTimeBetweenShifts('');
   };
-  
+
   const handleToTimeChange = (e) => {
-    const formattedTime = formatTime(e.target.value);
-    setToTime(formattedTime);
-    
+    setToTime(e.target.value);
     const fromDate = new Date(`1970-01-01T${fromTime}:00`);
-    const toDate = new Date(`1970-01-01T${formattedTime}:00`);
+    const toDate = new Date(`1970-01-01T${e.target.value}:00`);
+    
+    // Validación para asegurarse de que "Desde" sea menor que "Hasta"
     if (fromDate >= toDate) {
       setErrors((prev) => ({ ...prev, toTime: "El tiempo Hasta debe ser mayor que el tiempo Desde." }));
       setMaxShiftDuration('');
       return;
     } else {
-      setErrors((prev) => ({ ...prev, toTime: undefined }));
+      setErrors((prev) => ({ ...prev, toTime: undefined })); // Limpiar el error si es válido
     }
-  
+
     const diffInHours = (toDate - fromDate) / (1000 * 60 * 60);
     setMaxShiftDuration(diffInHours);
   };
@@ -117,13 +117,13 @@ const Horario = () => {
   const handleShiftDurationChange = (e) => {
     setShiftDuration(e.target.value);
     const remainingHours = maxShiftDuration - parseFloat(e.target.value);
-    setMaxTimeBetweenShifts(remainingHours);
+    setMaxTimeBetweenShifts(remainingHours); // Limitar el tiempo entre turnos
   };
 
   const formatTime = (hours) => {
     const hourPart = Math.floor(hours);
-    const minutePart = Math.round((hours % 1) * 60); // Usar Math.round para evitar problemas de precisión
-    return `${hourPart.toString().padStart(2, '0')}:${minutePart.toString().padStart(2, '0')}`;
+    const minutePart = (hours % 1) * 60;
+    return `${hourPart}:${minutePart.toString().padStart(2, '0')}`;
   };
 
   const handleConfirm = () => {
@@ -155,54 +155,62 @@ const Horario = () => {
     <div className="horario-container">
       <h1>Disponibilidad horaria</h1>
       <p>Seleccionar los horarios en los que ofreces tu servicio</p>
+
+      {/* Selección de horario Desde */}
       <div className="time-inputs">
         <div>
           <label>Desde</label>
           <input type="time" value={fromTime} onChange={handleFromTimeChange} />
         </div>
         {errors.fromTime && <p className="error-text">{errors.fromTime}</p>}
+
+        {/* Selección de horario Hasta (habilitado cuando se selecciona Desde) */}
         <div>
           <label>Hasta</label>
           <input
             type="time"
             value={toTime}
             onChange={handleToTimeChange}
-            disabled={!fromTime}
+            disabled={!fromTime} // Habilitado solo si se selecciona "Desde"
           />
         </div>
         {errors.toTime && <p className="error-text">{errors.toTime}</p>}
       </div>
+
+      {/* Selección de duración del turno (habilitado después de seleccionar "Hasta") */}
       <div className="shift-details">
         <div>
           <label>Duración del turno:</label>
           <select
             value={shiftDuration}
             onChange={handleShiftDurationChange}
-            disabled={!toTime}
+            disabled={!toTime} // Habilitado solo si se selecciona "Hasta"
           >
             {[...Array(Math.floor(maxShiftDuration * 2))].map((_, i) => {
               const hours = (i + 1) / 2;
               return (
                 <option key={hours} value={hours.toFixed(2)}>
-                  {formatTime(hours)}  {/* Asegúrate de usar la función formatTime aquí */}
+                  {formatTime(hours)}
                 </option>
               );
             })}
           </select>
           {errors.shiftDuration && <p className="error-text">{errors.shiftDuration}</p>}
         </div>
+
+        {/* Selección del descanso (habilitado después de seleccionar "Duración del turno") */}
         <div>
           <label>Tiempo entre turnos:</label>
           <select
             value={timeBetweenShifts}
             onChange={(e) => setTimeBetweenShifts(e.target.value)}
-            disabled={!shiftDuration}
+            disabled={!shiftDuration} // Habilitado solo si se selecciona "Duración del turno"
           >
             {[...Array(Math.floor(maxTimeBetweenShifts * 4))].map((_, i) => {
               const interval = (i + 1) / 4;
               return (
                 <option key={interval} value={interval.toFixed(2)}>
-                  {formatTime(interval)}  {/* Asegúrate de usar la función formatTime aquí */}
+                  {formatTime(interval)}
                 </option>
               );
             })}
