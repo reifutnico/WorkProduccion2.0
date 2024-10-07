@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/CreateService.css';
@@ -9,47 +9,63 @@ const CreateService = ({ setService }) => {
   const [NewCategoria, setNewCategoria] = useState('');
   const [NewModalidad, setNewModalidad] = useState('presencial');
   const [NewDescripcion, setNewDescripcion] = useState('');
-
+  
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  
+  const [categorias, setCategorias] = useState([]);
+  const [filteredCategorias, setFilteredCategorias] = useState([]);
+  
   const navigate = useNavigate();
-
+  
+  // Llamada a la API para obtener las categorías solo una vez
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await axios.get('http://localhost:5432/Categoria');
+        setCategorias(response.data); // Guardar todas las categorías en el estado
+      } catch (error) {
+        console.error('Error al obtener categorías:', error);
+      }
+    };
+    
+    fetchCategorias();
+  }, []);
+  
+  // Filtrar categorías mientras se escribe
+  const handleCategoriaChange = (e) => {
+    const value = e.target.value;
+    setNewCategoria(value);
+    
+    const filtered = categorias.filter((categoria) =>
+      categoria.Nombre.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredCategorias(filtered); // Actualizar la lista de categorías filtradas
+  };
+  
   const addService = async (e) => {
     e.preventDefault();
     let check = validateForm();
-    console.log(check);
-    console.log(NewCategoria);
+    
     if (check) {
       try {
-        const categoria = await axios.get('http://localhost:5432/Categoria/', {
-          params: {
-            Nombre: NewCategoria,   
-          },
-        });
-        console.log(categoria);
-        if (categoria.data[0] === undefined) {
+        const categoria = categorias.find((cat) => cat.Nombre === NewCategoria);
+        if (!categoria) {
           alert('No se encontró la categoría. La página se recargará.');
           window.location.reload();
         } else {
-          const idCategoria = categoria.data[0].id;
           const newService = {
             idCreador: 1,
-            idCategoria: idCategoria,
+            idCategoria: categoria.id,
             Nombre: NewNombre,
             Descripcion: NewDescripcion,
             Foto: image.name,
             Precio: NewPrecio,
           };
-          console.log(newService + "aa");
+          
           const response = await axios.post('http://localhost:5432/Servicio', newService);
           const idServicio = response.data.id;
-          console.log(idServicio + 'ssssss');
-          setNewNombre('');
-          setNewPrecio('');
-          setNewCategoria('');
-          setNewModalidad('presencial');
-          setNewDescripcion('');
           navigate(`/horario?id=${idServicio}`);
         }
       } catch (error) {
@@ -57,14 +73,14 @@ const CreateService = ({ setService }) => {
       }
     }
   };
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'modalidad') {
       setNewModalidad(value);
-    } 
+    }
   };
-
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -72,10 +88,10 @@ const CreateService = ({ setService }) => {
       setImagePreview(URL.createObjectURL(file));
     }
   };
-
+  
   const validateForm = () => {
     let formErrors = {};
-
+    
     if (!NewNombre) formErrors.Nombre = 'El Nombre es requerido.';
     if (!NewPrecio || !/^\d+(,\d{3})*(\.\d{2})?$/.test(NewPrecio)) {
       formErrors.precio = 'El precio debe estar en formato de dinero. Ej: $123.45';
@@ -84,12 +100,12 @@ const CreateService = ({ setService }) => {
     if (!NewModalidad) formErrors.modalidad = 'La modalidad es requerida.';
     if (!NewDescripcion) formErrors.Descripcion = 'La descripción es requerida.';
     if (!image) formErrors.image = 'La imagen es requerida.';
-
+    
     setErrors(formErrors);
-
+    
     return Object.keys(formErrors).length === 0;
   };
-
+  
   return (
     <div className="create-service-container">
       <h1>Crear servicio</h1>
@@ -146,14 +162,19 @@ const CreateService = ({ setService }) => {
           </div>
           <div className="form-group">
             <label htmlFor="Categoria">Categoría</label>
-            <input
-              type="text"
+            <select
               id="Categoria"
               name="Categoria"
               value={NewCategoria}
-              onChange={(e) => setNewCategoria(e.target.value)}
-              placeholder="Categoría"
-            />
+              onChange={(e) => setNewCategoria(e.target.value)}  // Al seleccionar una opción, se actualiza el estado
+            >
+              <option value="">Seleccione una categoría</option> {/* Opción por defecto */}
+              {categorias.map((categoria) => (
+                <option key={categoria.id} value={categoria.Nombre}>
+                  {categoria.Nombre}
+                </option>
+              ))}
+            </select>
             {errors.Categoria && <p className="error-text">{errors.Categoria}</p>}
           </div>
           <div className="form-group">
