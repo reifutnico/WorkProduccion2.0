@@ -20,9 +20,15 @@ const Horario = () => {
   // Lista de días en inglés
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+  const parseTime = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours + minutes / 60;
+  };
+  
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    setServiceId(params.get('id')); // Obtén el ID de los parámetros de consulta
+    setServiceId(params.get('id'));
   }, [location.search]);
 
   useEffect(() => {
@@ -41,17 +47,23 @@ const Horario = () => {
   }, [serviceId]);
 
   const newDisponibilidad = async (e) => {
-    e.preventDefault(); // Previene el refresco de la página
+    e.preventDefault();
     let check = validateForm();
     console.log(check);
-    if (check)  {
+    if (check) {
+      const durationDecimal = parseTime(shiftDuration);
+      const restDecimal = parseTime(timeBetweenShifts);
+      const formattedDuration = formatTime(durationDecimal);
+      const formattedRest = formatTime(restDecimal);
+  
       const Disponibilidades = {
         Dia: selectedDay,
         HoraDesde: fromTime,
         HoraHasta: toTime,
-        DuracionTurno: shiftDuration,
-        Descanso: timeBetweenShifts
+        DuracionTurno: formattedDuration,
+        Descanso: formattedRest,
       };
+  
       try {
         console.log(Disponibilidades);
         await axios.post(`http://localhost:5432/Servicio/Disponibilidades/${serviceId}`, Disponibilidades);
@@ -61,12 +73,12 @@ const Horario = () => {
         setShiftDuration('');
         setTimeBetweenShifts('');
         handleConfirm();
-
       } catch (error) {
         console.error('Error al agregar service:', error);
       }
     }
   };
+  
 
   const NextPage = async (e) => {
     e.preventDefault(); // Previene el refresco de la página
@@ -121,30 +133,45 @@ const Horario = () => {
   };
 
   const formatTime = (hours) => {
+    if (isNaN(hours) || hours < 0) return '00:00'; // Maneja caso NaN o negativo
     const hourPart = Math.floor(hours);
-    const minutePart = (hours % 1) * 60;
-    return `${hourPart}:${minutePart.toString().padStart(2, '0')}`;
+    const minutePart = Math.round((hours % 1) * 60); // Redondea los minutos
+    return `${hourPart.toString().padStart(2, '0')}:${minutePart.toString().padStart(2, '0')}`;
   };
 
   const handleConfirm = () => {
     let updatedSchedule = [...schedule];
     let existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
-
+  
     if (fromTime && toTime) {
+      const fromHour = parseTime(fromTime);
+      const toHour = parseTime(toTime);
+      const durationHours = toHour - fromHour;
+  
+      if (durationHours <= 0) {
+        alert('La duración debe ser positiva y realista.'); // Error si la duración es negativa o cero
+        return;
+      }
+  
+      const formattedDuration = formatTime(durationHours); // Formatear duración
+      const maxRest = durationHours; // El tiempo máximo de descanso es igual a la duración
+      const formattedRest = formatTime(maxRest); // Formatear descanso
+  
       if (existingDayIndex !== -1) {
         // Si ya existe el día en el schedule, agregamos el nuevo rango de horario
         updatedSchedule[existingDayIndex].ranges.push({ from: fromTime, to: toTime });
-        updatedSchedule[existingDayIndex].shiftDuration = shiftDuration;
-        updatedSchedule[existingDayIndex].timeBetweenShifts = timeBetweenShifts;
+        updatedSchedule[existingDayIndex].shiftDuration = formattedDuration; // Usar el valor formateado
+        updatedSchedule[existingDayIndex].timeBetweenShifts = formattedRest; // Usar el valor formateado
       } else {
         // Si no existe, creamos un nuevo objeto para ese día
         updatedSchedule.push({
           day: selectedDay,
           ranges: [{ from: fromTime, to: toTime }],
-          shiftDuration: shiftDuration,
-          timeBetweenShifts: timeBetweenShifts
+          shiftDuration: formattedDuration, // Usar el valor formateado
+          timeBetweenShifts: formattedRest, // Usar el valor formateado
         });
       }
+  
       setSchedule(updatedSchedule);
       setFromTime('');
       setToTime('');
