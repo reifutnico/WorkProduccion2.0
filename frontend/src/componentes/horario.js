@@ -135,33 +135,11 @@ const Horario = () => {
   };
   
   const handleConfirm = () => {
-    let updatedSchedule = [...schedule];
-    let existingDayIndex = updatedSchedule.findIndex(item => item.day === selectedDay);
-  
     if (fromTime && toTime) {
-      const durationHours = parseFloat(shiftDuration);
-      const restHours = parseFloat(timeBetweenShifts);
-      const formattedDuration = formatTimeBasedOnDecimal(durationHours);
-      const formattedRest = formatTimeBasedOnDecimal(restHours);
-  
-      if (existingDayIndex !== -1) {
-        updatedSchedule[existingDayIndex].ranges.push({ from: fromTime, to: toTime });
-        updatedSchedule[existingDayIndex].shiftDuration = formattedDuration;
-        updatedSchedule[existingDayIndex].timeBetweenShifts = formattedRest;
-      } else {
-        updatedSchedule.push({
-          day: selectedDay,
-          ranges: [{ from: fromTime, to: toTime }],
-          shiftDuration: formattedDuration,
-          timeBetweenShifts: formattedRest,
-        });
-      }
-  
-      setSchedule(updatedSchedule);
-      setFromTime('');
-      setToTime('');
+      window.location.reload();
     }
   };
+  
   
 
   return (
@@ -235,22 +213,19 @@ const Horario = () => {
       </div>
       <button onClick={newDisponibilidad}>Confirmar</button>
       <div className="schedule-list">
-        <h2>Horarios seleccionados:</h2>
-        {Array.isArray(schedule) && schedule.length > 0 ? (
-          schedule.map((item, index) => (
-            <div key={index}>
-              <h3>{item.day}</h3>
-              {item.ranges.map((range, idx) => (
-                <div key={idx}>
-                <p>Desde: {range.from} - Hasta: {range.to}</p>
-              </div>
-            ))}
-            <p>Duración del turno: {item.shiftDuration}</p>
-            <p>Tiempo entre turnos: {item.timeBetweenShifts}</p>
+      <h2>Horarios seleccionados:</h2>
+      {Array.isArray(schedule) && schedule.length > 0 ? (
+        schedule.map((item, index) => (
+          <div key={index}>
+            <h3>{item.Dia}</h3>
+            <p>Desde: {item.HoraDesde.split('T')[1].substring(0, 5)}</p>
+            <p>Hasta: {item.HoraHasta.split('T')[1].substring(0, 5)}</p>
+            <p>Duración del turno: {item.DuracionTurno.split('T')[1].substring(0, 5)}</p>
+            <p>Descanso: {item.Descanso.split('T')[1].substring(0, 5)}</p>
           </div>
         ))
       ) : (
-        <p>No hay horarios seleccionados aún.</p>
+        <p>No hay horarios seleccionados.</p>
       )}
     </div>
     <button onClick={NextPage}>Finalizar</button>
