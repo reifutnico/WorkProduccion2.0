@@ -106,7 +106,7 @@ export default class AccountRepository {
         }
     }
 
-    async getUserByIdTokeb(id) {
+    async getUserByIdToken(id) {
         const pool = await getConnection();
         const request = await pool.request();
         

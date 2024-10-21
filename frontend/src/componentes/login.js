@@ -1,39 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useContext  } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 import '../css/Login.css';
 
-function Login() { 
+
+function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate();
-
+    const { login } = useContext(UserContext);
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5432/api/user/login', {
-                username,
-                password,
-            });
-
-            if (response.status === 200) {
-                const token = response.data.token; 
-                localStorage.setItem('token', JSON.stringify(token));
-                const userResponse = await axios.get('http://localhost:5432/api/login/token', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`, 
-                    },
-                });
-                if (userResponse.status === 200) {
-                    const userData = userResponse.data;
-                    localStorage.setItem('userData', JSON.stringify(userData));
-                    navigate('/'); 
-                }
-            }
+            await login(username, password);
+            window.location.reload();
         } catch (error) {
             setErrorMessage('Error en el inicio de sesión');
-            console.error(error);
         }
     };
 

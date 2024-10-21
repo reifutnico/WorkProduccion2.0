@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/CreateService.css';
+import { UserContext } from '../context/UserContext';
 
 const CreateService = ({ setService }) => {
   const [NewNombre, setNewNombre] = useState('');
@@ -13,6 +14,7 @@ const CreateService = ({ setService }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [categorias, setCategorias] = useState([]);
+  const {token, user} = useContext(UserContext)
   const navigate = useNavigate();
   useEffect(() => {
     const fetchCategorias = async () => {
@@ -39,7 +41,7 @@ const CreateService = ({ setService }) => {
           window.location.reload();
         } else {
           const newService = {
-            idCreador: 1,
+            idCreador: user.id,
             idCategoria: categoria.id,
             Nombre: NewNombre,
             Descripcion: NewDescripcion,

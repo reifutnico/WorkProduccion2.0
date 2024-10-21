@@ -13,7 +13,7 @@ export default class AccountServices {
         const Us= await this.getUserByPayload(user,pass) 
         if(Us!=null){
           const token =await login(Us) 
-          return token;
+          return [token,Us];
         }else{
           return false;
         }
@@ -43,9 +43,9 @@ export default class AccountServices {
       }
 
       
-      async getUserByIdTokeb(id)
+      async getUserByIdToken(id)
       {
-      const response = await AccountRepositories.getUserByIdTokeb(id);
+      const response = await AccountRepositories.getUserByIdToken(id);
       return response;
       }
 

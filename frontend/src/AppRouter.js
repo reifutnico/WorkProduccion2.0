@@ -10,9 +10,11 @@ import Login from './componentes/login';
 import Register from './componentes/register';
 import Confirm from './componentes/confirm';
 import ConfirmToken from './componentes/confirmToken';
+import { UserProvider, UserContext } from './context/UserContext'; 
 
 
 const AppRouter = () => (
+  <UserProvider>
   <Router>
     <Navbar />
     <Routes>
@@ -27,6 +29,8 @@ const AppRouter = () => (
       <Route path="/confirm/:token" element={<ConfirmToken />} />
     </Routes>
   </Router>
+  </UserProvider>
+
 );
 
 export default AppRouter;

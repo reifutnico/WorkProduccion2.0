@@ -5,6 +5,7 @@ import Disponibilidad from "../entities/Disponibilidad.js";
 import Usuario from "../entities/Usuario.js";
 const router = express.Router();
 const servicioService = new ServicioService();
+import authMiddleware from "../../auth/authMiddleware.js";
 
 router.get("/", async (req, res) => {
     const { Nombre, CategoriaNombre, UsuarioNombre } = req.query;
@@ -51,12 +52,9 @@ router.put("/:id/Disponibilidad", async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
-    const { idCreador, idCategoria, Nombre, Descripcion, Foto, Precio } = req.body;
-    console.log(idCategoria + "aaaaa");
-      /*  if (!Array.isArray(Disponibilidades)) {
-            return res.status(400).json({ error: "Disponibilidades tiene que ser array de datos" });
-        }*/
+router.post("/",authMiddleware, async (req, res) => {
+        const  idCreador = req.user.id
+        const {idCategoria, Nombre, Descripcion, Foto, Precio } = req.body;
         const servicio = new Servicio(null, idCreador, idCategoria, Nombre, Descripcion, Foto, Precio);
         const id = await servicioService.CrearServicio(servicio);
         res.status(201).json({ message: 'Servicio creado exitosamente', id });

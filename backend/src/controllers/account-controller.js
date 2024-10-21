@@ -12,15 +12,17 @@ router.post("/login", async (request, response) => {
     const user = request.body.username;
     const pass = request.body.password;
     try {
-      const token = await AccountSrv.login(user, pass);
+      const [token,user1] = await AccountSrv.login(user, pass);
       if(token!=false){
       return response.status(200).json({
-        "succes":true,
+        "success":true,
         "message":"",
-        "token":token});
+        "token":token,
+        "user":user1
+    });
       }else{
         return response.status(401).json({
-          "succes":false,
+          "success":false,
           "message":"Incorrect username or password",
           "token":""});
       }
@@ -33,7 +35,7 @@ router.post("/login", async (request, response) => {
 router.get("/login/token", async (request, response) => { 
     id = request.user.id; 
     try {
-    const decoded = await AccountSrv.getUserByIdTokeb(id);
+    const decoded = await AccountSrv.getUserByIdToken(id);
     return response.status(200).json(decoded);
     } catch (error) {
     console.error("Error", error);

@@ -6,7 +6,7 @@ export default async function (Usuario){
     expiresIn:"3h",
     issuer:"proyect"
 }   
-    const payload = {"id":Usuario.id} 
+    const payload = {"id":Usuario.id, "username":Usuario.name};
     const token=jwt.sign(payload,process.env.SECRET_KEY,options); 
     return token; 
     }
