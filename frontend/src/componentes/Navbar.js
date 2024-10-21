@@ -11,7 +11,7 @@ const Navbar = () => {
   const [dropdown, setDropdown] = useState(null);
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [isLoginOpen, setLoginOpen] = useState(false);
-  const { token, user } = useContext(UserContext);
+  const { token, user, logout } = useContext(UserContext);
   console.log(token, user)
 
   const navigate = useNavigate(); // Hook para navegación
@@ -34,6 +34,12 @@ const Navbar = () => {
 
   const handleMouseLeave = () => {
     setDropdown(null);
+  };
+
+  
+  const handleLogout = () => {
+    logout()
+    navigate("/")
   };
 
   const handleSearch = async (categoriaNombre) => {
@@ -75,12 +81,17 @@ const Navbar = () => {
         </a>
       </div>
       ) : (
+        <div>
         <p>Bienvenido, {user.Nombre}!</p>
-      )
+        <button className="signup-btn" onClick={handleLogout}>Cerrar sesión</button>
+        </div>
+        )
     }
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
         <Login />
       </Modal>
+
+
     </nav>
   );
 }

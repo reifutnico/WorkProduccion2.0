@@ -41,7 +41,6 @@ const CreateService = ({ setService }) => {
           window.location.reload();
         } else {
           const newService = {
-            idCreador: user.id,
             idCategoria: categoria.id,
             Nombre: NewNombre,
             Descripcion: NewDescripcion,
@@ -49,7 +48,10 @@ const CreateService = ({ setService }) => {
             Precio: NewPrecio,
           };
           
-          const response = await axios.post('http://localhost:5432/Servicio', newService);
+          const response = await axios.post('http://localhost:5432/Servicio', newService, {
+            headers: {
+            'Authorization': `Bearer ${token}`
+            }});
           const idServicio = response.data.id;
           navigate(`/horario?id=${idServicio}`);
         }
