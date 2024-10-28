@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Calendar from "react-calendar";
 import axios from "axios";
 import 'react-calendar/dist/Calendar.css';
 import '../css/PerfilServicio.css';
 import { useParams } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 
 // Función para formatear las horas sin tener en cuenta la zona horaria
 const formatHour = (timeString) => {
@@ -66,6 +67,7 @@ const useDisponibilidad = (id, dia, fechaSeleccionada) => {
 
 const PerfilServicio = () => {
     const { id } = useParams(); 
+    const { token } = useContext(UserContext);
     const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
     const [reservasEstado, setReservasEstado] = useState({});
     const diaSeleccionado = diasDeLaSemana[fechaSeleccionada.getDay()];
@@ -78,16 +80,25 @@ const PerfilServicio = () => {
     const reservarTurno = async (idTurno) => {
         const fechaReserva = fechaSeleccionada.toISOString().split('T')[0]; 
         console.log(`Intentando reservar el turno con ID: ${idTurno} para la fecha: ${fechaReserva}`);
-
+    
         try {
-            const response = await axios.post(`http://localhost:5432/Servicio/Turnos/${idTurno}/reservar`, { fechaReserva });
+            console.log(token);
+            const response = await axios.post(
+                `http://localhost:5432/Servicio/Turnos/${idTurno}/reservar`, 
+                { fechaReserva },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
             console.log("Reserva creada exitosamente:", response.data);
             setFechaSeleccionada(new Date(fechaSeleccionada));
         } catch (err) {
             console.error(`Error al reservar el turno con ID: ${idTurno}`, err.response ? err.response.data : err.message);
         }
     };
-
+    
     const estaReservado = async (idTurno) => {
         const fechaSeleccionadaStr = fechaSeleccionada.toISOString().split('T')[0];
         console.log("Chequeando reserva para ID:", idTurno);

@@ -215,18 +215,19 @@ export default class ServicioRepository {
     
     
 
-    async crearReserva(idTurno, fechaReserva) {
+    async crearReserva(idTurno, fechaReserva,idUsuario) {
         const pool = await getConnection();
         const request = pool.request();
     
         try {
             const query = `
-                INSERT INTO turnosReservados (idTurno, fecha)
-                VALUES (@idTurno, @fechaReserva)
+                INSERT INTO turnosReservados (idTurno, fecha, idUsuario,estado )
+                VALUES (@idTurno, @fechaReserva, @idUsuario, 0)
             `;
             // Ejecutar la consulta
             request.input('idTurno', sql.Int, idTurno);
             request.input('fechaReserva', sql.Date, fechaReserva);
+            request.input('idUsuario', sql.Int, idUsuario);
             await request.query(query);
             return { success: true };
         } catch (error) {
@@ -336,5 +337,53 @@ export default class ServicioRepository {
         return recordset;
     }
 
+    async obtenerPendientes(idUsuario) {
+        const pool = await getConnection();
+        const request = pool.request();
+        try {
+            // Primera consulta: Obtener turnos reservados para el usuario
+            const queryTurnosReservados = `
+                SELECT * FROM turnosReservados
+                WHERE idUsuario = @idUsuario 
+            `;
+            request.input('idUsuario', sql.Int, idUsuario);
+            const resultTurnosReservados = await request.query(queryTurnosReservados);
+            const turnosReservados = resultTurnosReservados.recordset;
+    
+            const turnos = await Promise.all(turnosReservados.map(async (reserva) => {
+                const queryTurnos = `
+                    SELECT * FROM Turnos
+                    WHERE id = @idTurno
+                `;
+                const turnoRequest = pool.request();
+                turnoRequest.input('idTurno', sql.Int, reserva.idTurno);
+                const resultTurno = await turnoRequest.query(queryTurnos);
+                return resultTurno.recordset[0]; 
+            }));
+    
+            const servicios = await Promise.all(turnos.map(async (turno) => {
+                const queryServicios = `
+                    SELECT * FROM Disponibilidad
+                    WHERE id = @idDisponibilidad
+                `;
+                const servicioRequest = pool.request();
+                servicioRequest.input('idDisponibilidad', sql.Int, turno.idDisponibilidad);
+                const resultServicio = await servicioRequest.query(queryServicios);
+                return resultServicio.recordset[0]; 
+            }));
+    
+            return {
+                turnosReservados,
+                turnos,
+                servicios
+            };
+        } catch (error) {
+            console.error('Error al obtener reservas:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+    
     
 }

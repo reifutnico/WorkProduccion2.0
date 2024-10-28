@@ -7,6 +7,17 @@ const router = express.Router();
 const servicioService = new ServicioService();
 import authMiddleware from "../../auth/authMiddleware.js";
 
+router.get("/turnoPendiente",authMiddleware, async (req, res) => {
+    const  idUsuario = req.user.id
+    try {
+        const { turnosReservados, turnos, servicios } = await servicioService.obtenerPendientes(idUsuario);
+        res.status(200).json({ turnosReservados, turnos, servicios });
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.get("/", async (req, res) => {
     const { Nombre, CategoriaNombre, UsuarioNombre } = req.query;
     try {
@@ -134,12 +145,13 @@ router.get("/Turnos/:id", async (req, res) => {
     }
 });
 
-router.post("/Turnos/:id/reservar", async (req, res) => {
+router.post("/Turnos/:id/reservar", authMiddleware, async (req, res) => {
     const idTurno = req.params.id;
     const fechaReserva = req.body.fechaReserva; // Recibe la fecha de reserva del cuerpo de la solicitud
-
+    const  idUsuario = req.user.id
+    console.log(idUsuario + "aaaaaaaa");
     try {
-        const result = await servicioService.crearReserva(idTurno, fechaReserva);
+        const result = await servicioService.crearReserva(idTurno, fechaReserva,idUsuario);
         res.status(200).json({ result });
     } catch (error) {
         console.error('Error al crear reserva:', error);
@@ -168,6 +180,20 @@ router.get("/TurnosReservados/:id", async (req, res) => {
 });
 
 
+
+
+
+router.put("/turnoPendiente", async (req, res) => {
+    const idUsuario = req.params.id;
+    try {
+        const reservas = await servicioService.obtenerPendientes(idUsuario);
+        console.log('Reservas obtenidas:', reservas);
+        res.status(200).json({ data: reservas });
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 
