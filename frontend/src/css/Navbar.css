@@ -1,15 +1,18 @@
+/* Estilos generales del Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff;
   padding: 10px;
+  position: relative;
+  z-index: 2;
 }
 
 .navbar-logo-img {
-  height: 55px; /* Ajusta la altura del logo */
-  width: auto;  /* Mantiene la proporción original */
-  object-fit: contain; /* Asegura que la imagen se ajuste sin deformarse */
+  height: 55px;
+  width: auto;
+  object-fit: contain;
 }
 
 .navbar-menu {
@@ -21,30 +24,16 @@
 
 .navbar-item {
   position: relative;
-  padding: 0 15px; /* Añade espacio entre los elementos */
-  cursor: pointer; /* Añade un cursor pointer para indicar que es clicable */
+  padding: 0 15px;
+  cursor: pointer;
 }
 
-.navbar-item span {
-  font-family: 'Roboto', sans-serif;
-  font-size: 18px;
-  padding: 10px;
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  cursor: pointer; /* Asegura que haya un cursor pointer */
-}
-
-.navbar-item span:hover {
-  color: #008000;
-  border-bottom: 2px solid #008000;
-}
-
-.navbar-buttons {
+/* Botones de login y registro */
+.navbar-buttons, .navbar-user {
   display: flex;
 }
 
-.login-btn, .signup-btn {
+.login-btn, .signup-btn, .logout-btn {
   margin-left: 10px;
   background-color: #008000;
   color: #fff;
@@ -56,9 +45,77 @@
 }
 
 .signup-btn {
-  background-color: #004080; /* Color diferente para Signup */
+  background-color: #004080;
 }
 
-.login-btn:hover, .signup-btn:hover {
-  background-color: #006600; /* Color de hover */
+.login-btn:hover, .signup-btn:hover, .logout-btn:hover {
+  background-color: #006600;
+}
+
+/* Menú hamburguesa */
+.hamburger-icon {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 0; /* Alineado al extremo derecho */
+}
+
+.hamburger-icon .line {
+  height: 4px;
+  width: 30px;
+  background-color: #333;
+  margin: 4px 0;
+  transition: all 0.3s ease;
+}
+
+/* Menú desplegable */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 300px; /* Ancho del menú deslizante */
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: right 0.4s ease; /* Animación para deslizar */
+  z-index: 10;
+  padding: 20px;
+}
+
+.menu-overlay.open {
+  right: 0; /* Cambiar a 0 cuando esté abierto */
+}
+
+/* Cruz de cierre */
+.close-menu {
+  font-size: 30px;
+  color: #fff;
+  cursor: pointer;
+  align-self: flex-end; /* Alinear cruz a la parte superior derecha */
+  margin: 10px;
+}
+
+/* Enlaces del menú hamburguesa en columna vertical, alineados a la derecha */
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end; /* Alineación al lado derecho */
+  gap: 20px; /* Espacio entre los enlaces */
+  width: 100%;
+  padding: 0 20px;
+}
+
+.menu-content a {
+  color: #fff;
+  font-size: 18px;
+  text-decoration: none;
+  padding: 10px 20px;
+}
+
+.menu-content a:hover {
+  color: #008000;
 }
