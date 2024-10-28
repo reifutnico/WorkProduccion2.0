@@ -34,7 +34,6 @@
 }
 
 .login-btn, .signup-btn, .logout-btn {
-  margin-left: 10px;
   background-color: #008000;
   color: #fff;
   padding: 10px 20px;
@@ -44,11 +43,47 @@
   cursor: pointer;
 }
 
+.hamburger-btn {
+  margin-left: 20px; /* Espacio para el botón hamburguesa */
+  margin-right: 20px; /* Aumentar separación con botones de sesión */
+  background: none;
+  border: none;
+  font-size: 24px; /* Ajustar tamaño del ícono */
+  cursor: pointer;
+}
+
+
 .signup-btn {
   background-color: #004080;
 }
 
-.login-btn:hover, .signup-btn:hover, .logout-btn:hover {
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-buttons, .logout-btn {
+  margin-left: 15px; /* Ajusta el valor para la separación deseada */
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 15px; /* Espacio entre los botones de sesión */
+  margin-left: 20px; /* Aumentar separación del borde izquierdo */
+}
+
+
+.logout-btn {
+  background-color: #008000;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
   background-color: #006600;
 }
 
@@ -60,6 +95,16 @@
   margin-left: auto;
   margin-right: 0; /* Alineado al extremo derecho */
 }
+
+.hamburger-btn {
+  margin-left: 20px; /* Espacio para el botón hamburguesa */
+  margin-right: 20px; /* Aumentar separación con botones de sesión */
+  background: none;
+  border: none;
+  font-size: 24px; /* Ajustar tamaño del ícono */
+  cursor: pointer;
+}
+
 
 .hamburger-icon .line {
   height: 4px;
