@@ -7,12 +7,13 @@ import logo from '../img/worky_logo.png';
 import Modal from './modal';
 import ModalNotificaciones from './modalNotificaciones';
 import { format } from 'date-fns'; // Asegúrate de instalar date-fns
-
 import Login from './login';
 import { UserContext } from '../context/UserContext';
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(null);
+
+  const [isMenuOpen, setMenuOpen] = useState(false);
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isNotificationsOpen, setNotificationsOpen] = useState(false);
@@ -58,23 +59,21 @@ const Navbar = () => {
     setDropdown(null);
   };
 
+
   const handleLogout = () => {
+    logout();
+    navigate("/");
     logout();
     navigate("/");
   };
 
-  const handleSearch = async (categoriaNombre) => {
-    try {
-      const params = { 'CategoriaNombre': categoriaNombre };
-      const response = await axios.get(`http://localhost:5432/Servicio/`, { params });
-      const servicios = response.data;
-      navigate('/resultados', { state: { searchTerm: categoriaNombre, servicios } });
-    } catch (error) {
-      console.error('Error al buscar servicios:', error);
-    }
+  const toggleMenu = () => {
+    setMenuOpen(!isMenuOpen);
   };
 
-  const handleNotificationsClick = async () => {
+
+
+  const handleSearch = async () => {
     if (token) {
       await fetchData();
       setNotificationsOpen(true);
@@ -101,28 +100,37 @@ const Navbar = () => {
           </li>
         ))}
       </ul>
-      <div className="navbar-buttons">
-        {!token ? (
-          <>
+      <div className="navbar-actions">
+        {token ? (
+          <button className="logout-btn" onClick={handleLogout}>
+            Cerrar sesión
+          </button>
+        ) : (
+          <div className="navbar-buttons">
             <button className="login-btn" onClick={() => setLoginOpen(true)}>Login</button>
             <a href="/register">
               <button className="signup-btn">Register</button>
             </a>
-          </>
-        ) : (
-          <>
-            <p>Bienvenido, {user.Nombre}!</p>
-            <button className="signup-btn" onClick={handleLogout}>
-              Cerrar sesión
-            </button>
-            <button className="notifications-btn" onClick={handleNotificationsClick}>
-              Notificaciones
-            </button>
-          </>
+          </div>
         )}
+        <div className="hamburger-icon" onClick={toggleMenu}>
+          <div className="line"></div>
+          <div className="line"></div>
+          <div className="line"></div>
+        </div>
       </div>
 
-      {/* Modal de Login */}
+      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
+        <span className="close-menu" onClick={toggleMenu}>&times;</span>
+        <div className="menu-content">
+          <a href="#">Mi perfil</a>
+          <a href="#">Mis servicios</a>
+          <a href="#">Mis pagos</a>
+          <a href="#">Próximas citas</a>
+          <a href="#" onClick={handleLogout}>Cerrar sesión</a>
+        </div>
+      </div>
+
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
         <Login />
       </Modal>
@@ -144,7 +152,7 @@ const Navbar = () => {
           // Convertir la fecha a un formato legible
           const fecha = format(new Date(turnoReservado.fecha), 'dd/MM/yyyy');
           const estado = turnoReservado.estado === 0 ? 'Pendiente' : 'Confirmado'; // Asumiendo que 0 es pendiente
-          const comienzo = format(new Date(fecha.getFullYear(),turno.comienzo), ' HH:mm');
+          const comienzo = format(new Date(turno.comienzo), ' HH:mm');
           const final = format(new Date(turno.final), 'HH:mm');
           
           return (
@@ -174,9 +182,6 @@ const Navbar = () => {
     </div>
   )}
 </ModalNotificaciones>
-
-
-
     </nav>
   );
 };
