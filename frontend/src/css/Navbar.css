@@ -164,3 +164,13 @@
 .menu-content a:hover {
   color: #008000;
 }
+
+
+.notification-bell {
+  position: relative;
+  color: inherit; /* Color por defecto */
+}
+
+.notification-bell.red {
+  color: red; /* Color rojo si hay turnos reservados */
+}
