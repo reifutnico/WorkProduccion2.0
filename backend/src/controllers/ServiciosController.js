@@ -37,8 +37,8 @@ router.put("/turnoPendiente/:id", authMiddleware, async (req, res) => {
 router.get("/turnoPendiente",authMiddleware, async (req, res) => {
     const  idUsuario = req.user.id
     try {
-        const { turnosReservados, turnos, servicios } = await servicioService.obtenerPendientes(idUsuario);
-        res.status(200).json({ turnosReservados, turnos, servicios });
+        const data = await servicioService.obtenerPendientes(idUsuario);
+        res.status(200).json(data);
     } catch (error) {
         console.error('Error al obtener reservas:', error);
         res.status(500).json({ error: error.message });

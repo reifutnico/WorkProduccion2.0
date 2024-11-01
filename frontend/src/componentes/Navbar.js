@@ -6,10 +6,10 @@ import '../css/Navbar.css';
 import logo from '../img/worky_logo.png';
 import Modal from './modal';
 import ModalNotificaciones from './modalNotificaciones';
-import { format } from 'date-fns'; // Asegúrate de instalar date-fns
+import { format } from 'date-fns';
 import Login from './login';
 import { UserContext } from '../context/UserContext';
-import { FaBell } from 'react-icons/fa'; // Asegúrate de instalar react-icons
+import { FaBell } from 'react-icons/fa';
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(null);
@@ -17,14 +17,8 @@ const Navbar = () => {
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isNotificationsOpen, setNotificationsOpen] = useState(false);
+  const [data, setData] = useState([]);
   const [hasData, setHasData] = useState(false);
-
-  const [data, setData] = useState({
-    turnosReservados: [],
-    turnos: [],
-    servicios: []
-  });
-  const [error, setError] = useState(null);
 
   const { token, user, logout } = useContext(UserContext);
   const navigate = useNavigate();
@@ -47,7 +41,7 @@ const Navbar = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
-      console.log(response.data);
+      console.log(data);
     } catch (error) {
       console.error('Error al buscar :', error);
     }
@@ -58,21 +52,21 @@ const Navbar = () => {
   }, [token]);
 
   useEffect(() => {
-    setHasData(data.turnosReservados && data.turnosReservados.length > 0);
-  }, [data.turnosReservados]);
+    setHasData(data.length > 0);
+  }, [data]);
 
-  const confirmarTurno = async (nuevoEstado,idTurnoReservado) => {
+  const confirmarTurno = async (nuevoEstado, idTurnoReservado) => {
     try {
       const response = await axios.put(
         `http://localhost:5432/Servicio/turnoPendiente/${idTurnoReservado}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
-          params: { estado:nuevoEstado },
+          params: { estado: nuevoEstado },
         }
       );
       console.log('Reserva confirmada:', response.data);
-      fetchData(); 
+      fetchData();
     } catch (error) {
       console.error('Error al confirmar turno:', error);
     }
@@ -133,15 +127,14 @@ const Navbar = () => {
           </li>
         ))}
       </ul>
-      <div className="navbar-actions">      
-        
+      <div className="navbar-actions">
         {token ? (
           <>
             <div
-              className={`notification-bell ${hasData ? 'red' : ''}`} // Cambia la clase si hay datos
+              className={`notification-bell ${hasData ? 'red' : ''}`}
               onClick={handleNot}
             >
-              <FaBell size={24} /> <p>{data.turnosReservados.length}</p>
+              <FaBell size={24} /> <p>{data.length}</p>
             </div>
             <button className="logout-btn" onClick={handleLogout}>
               Cerrar sesión
@@ -162,74 +155,47 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
-        <span className="close-menu" onClick={toggleMenu}>&times;</span>
-        <div className="menu-content">
-          <a href="#">Mi perfil</a>
-          <a href="#">Mis servicios</a>
-          <a href="#">Mis pagos</a>
-          <a href="#">Próximas citas</a>
-          <a href="#" onClick={handleLogout}>Cerrar sesión</a>
-        </div>
-      </div>
-
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
         <Login />
       </Modal>
 
-      {/* Modal de Notificaciones */}
       <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
-        {error ? (
-          <p>Error: {error}</p>
-        ) : (
-          <div className="notifications-content">
-            {data.turnosReservados && Array.isArray(data.turnosReservados) && data.turnosReservados.length === 0 ? (
-              <p>No tienes turnos reservados.</p>
-            ) : (
-              data.turnosReservados && Array.isArray(data.turnosReservados) && data.turnosReservados.map((turnoReservado, index) => {
-                const turno = data.turnos.find(t => t.id === turnoReservado.idTurno);
-                const servicio = data.servicios.find(s => s.id === turno.idDisponibilidad);
-                const fecha = format(new Date(turnoReservado.fecha), 'dd/MM/yyyy');
-                const estado = turnoReservado.estado === 0 ? 'Pendiente' : 'Confirmado';
-                
-                const formatHourMinute = (date) => {
-                  const hours = String(date.getHours()).padStart(2, '0');
-                  const minutes = String(date.getMinutes()).padStart(2, '0');
-                  return `${hours}:${minutes}`;
-                };
-                
-                const comienzo = formatHourMinute(new Date(turno.comienzo));
-                const final = formatHourMinute(new Date(turno.final));
-                
-                return (
-                  <div key={index} className="turno-item">
-                    <h3 className="turno-title">Turno a confirmar</h3>
-                    <div className="modal-items">
-                      <div className="modal-item">
-                        <p><strong>Fecha:</strong> {fecha}</p>
-                        <p><strong>Estado:</strong> {estado}</p>
-                      </div>
-                      {turno && (
-                        <div className="modal-item">
-                          <p><strong>Comienzo:</strong> {comienzo}</p>
-                          <p><strong>Final:</strong> {final}</p>
-                        </div>
-                      )}
-                      {servicio && (
-                        <div className="modal-item">
-                          <p><strong>Día:</strong> {servicio.Dia}</p>
-                        </div>
-                      )}
-                     <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>ACEPTAR</button>
-                      <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>RECHAZAR</button>
-                      
+        <div className="notifications-content">
+          {data.length === 0 ? (
+            <p>No tienes turnos reservados.</p>
+          ) : (
+            data.map((turnoReservado, index) => {
+              const fecha = format(new Date(turnoReservado.fecha), 'dd/MM/yyyy');
+
+              const formatHourMinute = (date) => {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+              };
+
+              const comienzo = formatHourMinute(new Date(turnoReservado.comienzo));
+              const final = formatHourMinute(new Date(turnoReservado.final));
+
+              return (
+                <div key={index} className="turno-item">
+                  <h3 className="turno-title">Turno a confirmar</h3>
+                  <div className="modal-items">
+                    <div className="modal-item">
+                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p> 
+                      <p><strong>Fecha:</strong> {fecha}</p>
                     </div>
+                    <div className="modal-item">
+                      <p><strong>Comienzo:</strong> {comienzo}</p>
+                      <p><strong>Final:</strong> {final}</p>
+                    </div>
+                    <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>ACEPTAR</button>
+                    <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>RECHAZAR</button>
                   </div>
-                );
-              })
-            )}
-          </div>
-        )}
+                </div>
+              );
+            })
+          )}
+        </div>
       </ModalNotificaciones>
     </nav>
   );
