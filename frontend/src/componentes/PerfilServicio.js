@@ -107,9 +107,7 @@ const PerfilServicio = () => {
         try {
             const response = await axios.get(`http://localhost:5432/Servicio/TurnosReservados/${idTurno}?Fecha=${fechaSeleccionadaStr}`);
             const reservasEnTurno = response.data.data;
-
             console.log("Reservas encontradas:", reservasEnTurno);
-
             setReservasEstado(prevEstado => ({
                 ...prevEstado,
                 [idTurno]: reservasEnTurno.length > 0

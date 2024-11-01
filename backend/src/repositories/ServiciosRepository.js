@@ -214,24 +214,22 @@ export default class ServicioRepository {
 
     
     
-    async crearReserva(idTurno, fechaReserva, idUsuario) {
+
+    async crearReserva(idTurno, fechaReserva,idUsuario) {
         const pool = await getConnection();
         const request = pool.request();
     
         try {
-            // Definir la consulta de inserción
-            const insertQuery = `
-                INSERT INTO turnosReservados (idTurno, fecha, idUsuario, estado)
+            const query = `
+                INSERT INTO turnosReservados (idTurno, fecha, idUsuario,estado )
                 VALUES (@idTurno, @fechaReserva, @idUsuario, 0)
             `;
-    
-            // Ejecutar la consulta de inserción
+            // Ejecutar la consulta
             request.input('idTurno', sql.Int, idTurno);
             request.input('fechaReserva', sql.Date, fechaReserva);
             request.input('idUsuario', sql.Int, idUsuario);
-            await request.query(insertQuery);
-            const result = await request.query(selectQuery);
-            return { success: true, data: result.recordset };
+            await request.query(query);
+            return { success: true };
         } catch (error) {
             console.error('Error al crear reserva:', error.stack);
             throw error;
@@ -391,26 +389,42 @@ export default class ServicioRepository {
     async cambiarEstado(idTurnoReservado, estado) {
         const pool = await getConnection();
         const request = pool.request();
+        
         try {
-            const query = `UPDATE turnosReservados SET estado = @estado WHERE idTurno = @idTurnoReservado`;
-            request.input('idTurnoReservado', sql.Int, idTurnoReservado);
-            request.input('estado', sql.Int, estado);
-            
-            const result = await request.query(query);
-            console.log('Resultados de la consulta:', result);
+            const estadoNum = parseInt(estado, 10);
+            if (estadoNum === 2) {
+                const deleteQuery = `DELETE FROM turnosReservados WHERE idTurno = @idTurnoReservado`;
+                request.input('idTurnoReservado', sql.Int, idTurnoReservado);
+                const result = await request.query(deleteQuery);
+                console.log('Resultados de la consulta de eliminación:', result);
     
-            // Verificar si la actualización afectó alguna fila
-            if (result.rowsAffected[0] === 0) {
-                console.log('No se encontraron resultados para actualizar.');
-                return null; // Puedes retornar null o un valor indicativo
+                if (result.rowsAffected[0] === 0) {
+                    console.log('No se encontraron resultados para eliminar.');
+                    return null;
+                }
+                return result.rowsAffected[0]; 
+            } else if (estadoNum === 1) {
+                const updateQuery = `UPDATE turnosReservados SET estado = @estado WHERE idTurno  = @idTurnoReservado`;
+                request.input('estado', sql.Int, estadoNum);
+                request.input('idTurnoReservado', sql.Int, idTurnoReservado);
+                const result = await request.query(updateQuery);
+                console.log('Resultados de la consulta de actualización:', result);
+    
+                if (result.rowsAffected[0] === 0) {
+                    console.log('No se encontraron resultados para actualizar.');
+                    return null; 
+                }
+                return result.rowsAffected[0]; 
+            } else {
+                console.log('Estado no válido. Debe ser 1 o 2.');
+                return null; 
             }
-    
-            return result.rowsAffected[0]; // Retorna el número de filas afectadas
         } catch (error) {
             console.error('Error al cambiar el estado:', error.stack);
-            throw error; // Puedes manejar el error de una manera más personalizada si lo deseas
+            throw error; // Manejo del error
         } finally {
             pool.close();
         }
     }
+    
 }
