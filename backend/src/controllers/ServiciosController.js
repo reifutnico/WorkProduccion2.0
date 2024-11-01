@@ -7,6 +7,33 @@ const router = express.Router();
 const servicioService = new ServicioService();
 import authMiddleware from "../../auth/authMiddleware.js";
 
+
+router.put("/turnoPendiente/:id", authMiddleware, async (req, res) => {
+    const idTurnoReservado = parseInt(req.params.id, 10); // Convertir a número
+    const estado = req.query.estado; // Cambiado para tomar del cuerpo de la solicitud
+
+    console.log(`ID del turno reservado: ${idTurnoReservado}`);
+    console.log(`Estado: ${estado}`);
+
+    // Validación de parámetros
+    if (isNaN(idTurnoReservado)) {
+        return res.status(400).json({ error: 'ID del turno reservado inválido.' });
+    }
+    
+    if (estado == null) {
+        return res.status(400).json({ error: 'Estado es obligatorio.' });
+    }
+
+    try {
+        const reservas = await servicioService.cambiarEstado(idTurnoReservado, estado);
+        res.status(200).json({ data: reservas });
+    } catch (error) {
+        console.error('Error al cambiar el estado del turno:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 router.get("/turnoPendiente",authMiddleware, async (req, res) => {
     const  idUsuario = req.user.id
     try {
@@ -147,7 +174,7 @@ router.get("/Turnos/:id", async (req, res) => {
 
 router.post("/Turnos/:id/reservar", authMiddleware, async (req, res) => {
     const idTurno = req.params.id;
-    const fechaReserva = req.body.fechaReserva; // Recibe la fecha de reserva del cuerpo de la solicitud
+    const fechaReserva = req.body.fechaReserva; 
     const  idUsuario = req.user.id
     console.log(idUsuario + "aaaaaaaa");
     try {
@@ -180,20 +207,6 @@ router.get("/TurnosReservados/:id", async (req, res) => {
 });
 
 
-
-
-
-router.put("/turnoPendiente", async (req, res) => {
-    const idUsuario = req.params.id;
-    try {
-        const reservas = await servicioService.obtenerPendientes(idUsuario);
-        console.log('Reservas obtenidas:', reservas);
-        res.status(200).json({ data: reservas });
-    } catch (error) {
-        console.error('Error al obtener reservas:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
 
 
 

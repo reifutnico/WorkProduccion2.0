@@ -17,7 +17,7 @@ const Navbar = () => {
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isNotificationsOpen, setNotificationsOpen] = useState(false);
-  const [hasData, sethasData] = useState(false);
+  const [hasData, setHasData] = useState(false);
 
   const [data, setData] = useState({
     turnosReservados: [],
@@ -47,19 +47,37 @@ const Navbar = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
-      sethasData(response.data.turnosReservados && response.data.turnosReservados.length > 0);
-      console.log(response.data);    
-    } catch (err) {
-      setError(err.response ? err.response.data.message : err.message);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error al buscar :', error);
     }
   };
+
   useEffect(() => {
-    if (token) {
-      fetchData();
-    }
+    fetchData();
   }, [token]);
 
-  
+  useEffect(() => {
+    setHasData(data.turnosReservados && data.turnosReservados.length > 0);
+  }, [data.turnosReservados]);
+
+  const confirmarTurno = async (nuevoEstado,idTurnoReservado) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5432/Servicio/turnoPendiente/${idTurnoReservado}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { estado:nuevoEstado },
+        }
+      );
+      console.log('Reserva confirmada:', response.data);
+      fetchData(); 
+    } catch (error) {
+      console.error('Error al confirmar turno:', error);
+    }
+  };
+
   const handleMouseEnter = (categoriaMadre) => {
     setDropdown(categoriaMadre.id);
   };
@@ -119,18 +137,16 @@ const Navbar = () => {
         
         {token ? (
           <>
-        <div
-            className={`notification-bell ${hasData ? 'red' : ''}`} // Cambia la clase si hay datos
-            onClick={handleNot}
-          >
-            <FaBell size={24} />
-        </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            Cerrar sesión
-          </button>
-
-        </>
-
+            <div
+              className={`notification-bell ${hasData ? 'red' : ''}`} // Cambia la clase si hay datos
+              onClick={handleNot}
+            >
+              <FaBell size={24} /> <p>{data.turnosReservados.length}</p>
+            </div>
+            <button className="logout-btn" onClick={handleLogout}>
+              Cerrar sesión
+            </button>
+          </>
         ) : (
           <div className="navbar-buttons">
             <button className="login-btn" onClick={() => setLoginOpen(true)}>Login</button>
@@ -185,7 +201,6 @@ const Navbar = () => {
                 const comienzo = formatHourMinute(new Date(turno.comienzo));
                 const final = formatHourMinute(new Date(turno.final));
                 
-                
                 return (
                   <div key={index} className="turno-item">
                     <h3 className="turno-title">Turno a confirmar</h3>
@@ -205,6 +220,9 @@ const Navbar = () => {
                           <p><strong>Día:</strong> {servicio.Dia}</p>
                         </div>
                       )}
+                     <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>ACEPTAR</button>
+                      <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>RECHAZAR</button>
+                      
                     </div>
                   </div>
                 );
