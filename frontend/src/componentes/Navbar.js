@@ -26,7 +26,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCategoriasMadre = async () => {
       try {
-        const response = await axios.get('http://localhost:5432/Categoria/categoriasMadre');
+        const response = await axios.get('http://localhost:5000/Categoria/categoriasMadre');
         setCategoriasMadre(response.data);
       } catch (error) {
         console.error('Error al buscar CategoriasMadre:', error);
@@ -37,7 +37,7 @@ const Navbar = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5432/Servicio/turnoPendiente', {
+      const response = await axios.get('http://localhost:5000/Servicio/turnoPendiente', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
@@ -58,7 +58,7 @@ const Navbar = () => {
   const confirmarTurno = async (nuevoEstado, idTurnoReservado) => {
     try {
       const response = await axios.put(
-        `http://localhost:5432/Servicio/turnoPendiente/${idTurnoReservado}`,
+        `http://localhost:5000/Servicio/turnoPendiente/${idTurnoReservado}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -92,7 +92,7 @@ const Navbar = () => {
   const handleSearch = async (categoriaNombre) => {
     try {
       const params = { 'CategoriaNombre': categoriaNombre };
-      const response = await axios.get(`http://localhost:5432/Servicio/`, { params });
+      const response = await axios.get(`http://localhost:5000/Servicio/`, { params });
       const servicios = response.data;
       navigate('/resultados', { state: { searchTerm: categoriaNombre, servicios } });
     } catch (error) {
@@ -139,6 +139,11 @@ const Navbar = () => {
             <button className="logout-btn" onClick={handleLogout}>
               Cerrar sesión
             </button>
+            <div className="hamburger-icon" onClick={toggleMenu}>
+            <div className="line"></div>
+            <div className="line"></div>
+            <div className="line"></div>
+        </div>
           </>
         ) : (
           <div className="navbar-buttons">
@@ -148,11 +153,6 @@ const Navbar = () => {
             </a>
           </div>
         )}
-        <div className="hamburger-icon" onClick={toggleMenu}>
-          <div className="line"></div>
-          <div className="line"></div>
-          <div className="line"></div>
-        </div>
       </div>
 
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
@@ -188,8 +188,8 @@ const Navbar = () => {
                       <p><strong>Comienzo:</strong> {comienzo}</p>
                       <p><strong>Final:</strong> {final}</p>
                     </div>
-                    <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>ACEPTAR</button>
-                    <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>RECHAZAR</button>
+                    <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
+                    <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
                   </div>
                 </div>
               );

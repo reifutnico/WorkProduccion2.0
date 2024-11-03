@@ -16,7 +16,7 @@ const SearchResults = () => {
       const params = {
         [modo]: searchTerm2
       };
-      const response = await axios.get('http://localhost:5432/Servicio/', { params });
+      const response = await axios.get('http://localhost:5000/Servicio/', { params });
       const servicios = response.data;
       searchTerm = searchTerm2;
       navigate('/resultados', { state: { searchTerm, servicios } });

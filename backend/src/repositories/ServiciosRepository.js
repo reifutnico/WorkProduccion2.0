@@ -191,7 +191,6 @@ export default class ServicioRepository {
         const request = pool.request();
 
         try {
-            // Consulta para obtener los turnos asociados al idDisponibilidad
             const query = `
                 SELECT *
                 FROM Turnos
@@ -218,7 +217,6 @@ export default class ServicioRepository {
     async crearReserva(idTurno, fechaReserva,idUsuario) {
         const pool = await getConnection();
         const request = pool.request();
-    
         try {
             const query = `
                 INSERT INTO turnosReservados (idTurno, fecha, idUsuario,estado )
@@ -401,5 +399,44 @@ export default class ServicioRepository {
             pool.close();
         }
     }
+    async obtenerInfoTurnoReservado(turnoReservadoId) {
+        try {
+            const pool = await sql.connect(config);
+            const result = await pool.request()
+                .input('turnoReservadoId', sql.Int, turnoReservadoId)
+                .query(`
+                    SELECT 
+                        tr.id AS turnoReservadoId,
+                        tr.fecha,
+                        uContratador.Nombre AS nombreContratador,
+                        uCreador.Nombre AS nombreCreadorServicio,
+                        s.Nombre AS nombreServicio,
+                        c.Nombre AS tipoServicio,
+                        t.comienzo,
+                        t.final,
+                        'Ubicación placeholder' AS ubicacion
+                    FROM 
+                        turnosReservados AS tr
+                    JOIN 
+                        Turnos AS t ON tr.idTurno = t.id
+                    JOIN 
+                        Disponibilidad AS d ON t.idDisponibilidad = d.id
+                    JOIN 
+                        Servicios AS s ON d.idServicio = s.id
+                    JOIN 
+                        Categorias AS c ON s.idCategoria = c.id
+                    JOIN 
+                        Usuarios AS uContratador ON tr.idUsuario = uContratador.id
+                    JOIN 
+                        Usuarios AS uCreador ON s.idCreador = uCreador.id
+                    WHERE 
+                        tr.id = @turnoReservadoId;
+                `);
     
+            return result.recordset[0];
+        } catch (error) {
+            console.error('Error al obtener la información del turno reservado:', error);
+            throw error;
+        }
+    }
 }

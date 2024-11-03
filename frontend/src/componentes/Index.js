@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import trabajadorImg from '../img/trabajadorIndex.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/index.css';
+import { UserContext } from '../context/UserContext';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,12 +12,13 @@ const Index = () => {
   const [currentIndex, setCurrentIndex] = useState(0); // Índice para controlar el desplazamiento
   const navigate = useNavigate();
   const itemsPerPage = 4; // Cantidad de categorías visibles
+  const { token } = useContext(UserContext);
 
   // Obtener categorías madre para el carrusel
   useEffect(() => {
     const fetchCategoriasMadre = async () => {
       try {
-        const response = await axios.get('http://localhost:5432/Categoria/categoriasMadre');
+        const response = await axios.get('http://localhost:5000/Categoria/categoriasMadre');
         setCategoriasMadre(response.data);
       } catch (error) {
         console.error('Error al buscar CategoriasMadre:', error);
@@ -41,7 +43,7 @@ const Index = () => {
   const handleSearch = async () => {
     try {
       const params = { [modo]: searchTerm };
-      const response = await axios.get(`http://localhost:5432/Servicio/`, { params });
+      const response = await axios.get(`http://localhost:5000/Servicio/`, { params });
       const servicios = response.data;
       navigate('/resultados', { state: { searchTerm, servicios } });
     } catch (error) {
@@ -76,9 +78,13 @@ const Index = () => {
             <div className="medio">
               <div className="btn-group">
                 <button className="join-btn">Únete a Worky</button>
-                <a href="/crear-servicio">
+                {token ? (
+                  <>
+                  <a href="/crear-servicio">  
                   <button className="create-service-button">Crear Servicio</button>
-                </a>
+                  </a>
+                  </>
+                ):(<></>)}
               </div>
             </div>
           </div>

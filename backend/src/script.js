@@ -10,7 +10,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-const port = 5432;
+const port = 5000;
 
 app.use("/Servicio", ServiciosController);
 app.use("/Categoria", CategoriaController);

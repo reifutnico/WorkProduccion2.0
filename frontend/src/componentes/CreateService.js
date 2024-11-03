@@ -19,7 +19,7 @@ const CreateService = ({ setService }) => {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get('http://localhost:5432/Categoria');
+        const response = await axios.get('http://localhost:5000/Categoria');
         setCategorias(response.data);
       } catch (error) {
         console.error('Error al obtener categorías:', error);
@@ -48,7 +48,7 @@ const CreateService = ({ setService }) => {
             Precio: NewPrecio,
           };
           
-          const response = await axios.post('http://localhost:5432/Servicio', newService, {
+          const response = await axios.post('http://localhost:5000/Servicio', newService, {
             headers: {
             'Authorization': `Bearer ${token}`
             }});

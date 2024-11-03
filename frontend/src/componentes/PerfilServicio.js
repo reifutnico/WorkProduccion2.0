@@ -30,8 +30,8 @@ const useDisponibilidad = (id, dia, fechaSeleccionada) => {
                 setError(null);
 
                 const [disponibilidadResponse, reservasResponse] = await Promise.all([
-                    axios.get(`http://localhost:5432/Servicio/Turnos/${id}?Dia=${dia}`),
-                    axios.get(`http://localhost:5432/Servicio/TurnosReservados/${id}?Fecha=${fechaSeleccionada.toISOString().split('T')[0]}`)
+                    axios.get(`http://localhost:5000/Servicio/Turnos/${id}?Dia=${dia}`),
+                    axios.get(`http://localhost:5000/Servicio/TurnosReservados/${id}?Fecha=${fechaSeleccionada.toISOString().split('T')[0]}`)
                 ]);
 
                 console.log("Disponibilidad desde la API:", disponibilidadResponse.data.data);
@@ -84,7 +84,7 @@ const PerfilServicio = () => {
         try {
             console.log(token);
             const response = await axios.post(
-                `http://localhost:5432/Servicio/Turnos/${idTurno}/reservar`, 
+                `http://localhost:5000/Servicio/Turnos/${idTurno}/reservar`, 
                 { fechaReserva },
                 {
                     headers: {
@@ -105,7 +105,7 @@ const PerfilServicio = () => {
         console.log("Fecha seleccionada:", fechaSeleccionadaStr);
 
         try {
-            const response = await axios.get(`http://localhost:5432/Servicio/TurnosReservados/${idTurno}?Fecha=${fechaSeleccionadaStr}`);
+            const response = await axios.get(`http://localhost:5000/Servicio/TurnosReservados/${idTurno}?Fecha=${fechaSeleccionadaStr}`);
             const reservasEnTurno = response.data.data;
             console.log("Reservas encontradas:", reservasEnTurno);
 

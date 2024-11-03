@@ -28,7 +28,7 @@ const Horario = () => {
     const fetchSchedule = async () => {
       if (serviceId) {
         try {
-          const response = await axios.get(`http://localhost:5432/Disponibilidad/${serviceId}`);
+          const response = await axios.get(`http://localhost:5000/Disponibilidad/${serviceId}`);
           setSchedule(response.data);
         } catch (error) {
           console.error('Error al obtener disponibilidad:', error);
@@ -55,7 +55,7 @@ const Horario = () => {
       };
   
       try {
-        await axios.post(`http://localhost:5432/Servicio/Disponibilidades/${serviceId}`, Disponibilidades);
+        await axios.post(`http://localhost:5000/Servicio/Disponibilidades/${serviceId}`, Disponibilidades);
         setSelectedDay('Monday');
         setFromTime('');
         setToTime('');

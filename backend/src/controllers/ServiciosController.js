@@ -9,21 +9,18 @@ import authMiddleware from "../../auth/authMiddleware.js";
 
 
 router.put("/turnoPendiente/:id", authMiddleware, async (req, res) => {
-    const idTurnoReservado = parseInt(req.params.id, 10); // Convertir a número
-    const estado = req.query.estado; // Cambiado para tomar del cuerpo de la solicitud
+    const idTurnoReservado = parseInt(req.params.id, 10);
+    const estado = req.query.estado;
 
     console.log(`ID del turno reservado: ${idTurnoReservado}`);
     console.log(`Estado: ${estado}`);
 
-    // Validación de parámetros
     if (isNaN(idTurnoReservado)) {
         return res.status(400).json({ error: 'ID del turno reservado inválido.' });
     }
-    
     if (estado == null) {
         return res.status(400).json({ error: 'Estado es obligatorio.' });
     }
-
     try {
         const reservas = await servicioService.cambiarEstado(idTurnoReservado, estado);
         res.status(200).json({ data: reservas });
@@ -34,8 +31,8 @@ router.put("/turnoPendiente/:id", authMiddleware, async (req, res) => {
 });
 
 
-router.get("/turnoPendiente",authMiddleware, async (req, res) => {
-    const  idUsuario = req.user.id
+router.get("/turnoPendiente", authMiddleware, async (req, res) => {
+    const idUsuario = req.user.id
     try {
         const data = await servicioService.obtenerPendientes(idUsuario);
         res.status(200).json(data);
@@ -132,7 +129,7 @@ router.get("/Disponibilidad/:id", async (req, res) => {
         const response = await servicioService.ObtenerDisponibilidad(idServicio,Dia);
         res.status(200).json({
             message: 'Obtener Dispo',
-            data: response // Aquí se envía el objeto JSON obtenido de la base de datos
+            data: response
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -148,15 +145,14 @@ router.get("/Turnos/:id", async (req, res) => {
 
     try {
         const disponibilidad = await servicioService.ObtenerDisponibilidad(idServicio, Dia);
-        console.log('Resultados de Disponibilidad:', disponibilidad); // Imprimir todo el resultado
+        console.log('Resultados de Disponibilidad:', disponibilidad);
 
-        // Verificar si disponibilidad tiene resultados
         if (disponibilidad && disponibilidad.length > 0) {
-            const disponibilidadId = disponibilidad[0].id; // Acceder al id del primer resultado
-            console.log(`ID de Disponibilidad: ${disponibilidadId}`); // Imprimir la ID
+            const disponibilidadId = disponibilidad[0].id;
+            console.log(`ID de Disponibilidad: ${disponibilidadId}`);
             
             const turnos = await servicioService.ObtenerTurnos(disponibilidadId);
-            console.log('Turnos obtenidos:', turnos); // Imprimir los turnos obtenidos
+            console.log('Turnos obtenidos:', turnos);
 
             res.status(200).json({
                 message: 'Obtener turnos',
@@ -188,15 +184,13 @@ router.post("/Turnos/:id/reservar", authMiddleware, async (req, res) => {
 
 router.get("/TurnosReservados/:id", async (req, res) => {
     const idTurno = req.params.id;
-    const fecha = req.query.Fecha; // Obtiene la fecha en formato YYYY-MM-DD
+    const fecha = req.query.Fecha;
 
     console.log('ID Turno recibido:', idTurno);
     console.log('Fecha recibida:', fecha);
 
     try {
         const reservas = await servicioService.obtenerReservas(idTurno, fecha);
-
-        // Verifica los datos obtenidos y enviados
         console.log('Reservas obtenidas:', reservas);
 
         res.status(200).json({ data: reservas });
@@ -206,6 +200,24 @@ router.get("/TurnosReservados/:id", async (req, res) => {
     }
 });
 
+router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res) => {
+    const idTurnoReservado = parseInt(req.params.turnoReservadoId, 10);
+    console.log(`ID del turno reservado: ${idTurnoReservado}`);
+    if (isNaN(idTurnoReservado)) {
+        return res.status(400).json({ error: 'ID del turno reservado inválido.' });
+    }
+
+    try {
+        const turnoInfo = await turnoService.obtenerInfoTurnoReservado(idTurnoReservado);
+        if (!turnoInfo) {
+            return res.status(404).json({ error: 'No se encontró el turno reservado.' });
+        }
+        res.status(200).json({ data: turnoInfo });
+    } catch (error) {
+        console.error('Error al obtener la información del turno reservado:', error);
+        res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud.' });
+    }
+});
 
 
 

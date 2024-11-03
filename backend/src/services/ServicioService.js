@@ -118,7 +118,11 @@ export default class ServicioService {
         }
     }
     
-    
-    
-
+    async obtenerInfoTurnoReservado(idTurnoReservado) {
+        try {
+            return await servicioRepository.obtenerInfoTurnoReservado(idTurnoReservado);
+        } catch (error) {
+           throw new Error('Error al en el estado');
+        }
+    }
 }
