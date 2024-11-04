@@ -4,6 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/index.css';
 import { UserContext } from '../context/UserContext';
+import artistaImg from '../img/artista.jpg';
+import entrenadorImg from '../img/entrenador.jpg';
+import gasistaImg from '../img/gasista.jpeg';
+import plomeroImg from '../img/plomero.jpg';
+import programadorImg from '../img/programador.jpg';
+
+const imagenesCategoria = {
+  Artista: artistaImg,
+  Entrenador: entrenadorImg,
+  Gasista: gasistaImg,
+  Plomero: plomeroImg,
+  Programador: programadorImg,
+};
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,7 +24,7 @@ const Index = () => {
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0); // Índice para controlar el desplazamiento
   const navigate = useNavigate();
-  const itemsPerPage = 4; // Cantidad de categorías visibles
+  const itemsPerPage = 3; // Cantidad de categorías visibles al mismo tiempo
   const { token } = useContext(UserContext);
 
   // Obtener categorías madre para el carrusel
@@ -30,13 +43,13 @@ const Index = () => {
   // Función para manejar el cambio de categorías visibles al presionar las flechas
   const handleNext = () => {
     if (currentIndex < categoriasMadre.length - itemsPerPage) {
-      setCurrentIndex(currentIndex + itemsPerPage);
+      setCurrentIndex(currentIndex + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - itemsPerPage);
+      setCurrentIndex(currentIndex - 1);
     }
   };
 
@@ -78,37 +91,44 @@ const Index = () => {
             <div className="medio">
               <div className="btn-group">
                 <button className="join-btn">Únete a Worky</button>
-                {token ? (
-                  <>
-                  <a href="/crear-servicio">  
-                  <button className="create-service-button">Crear Servicio</button>
+                {token && (
+                  <a href="/crear-servicio">
+                    <button className="create-service-button">Crear Servicio</button>
                   </a>
-                  </>
-                ):(<></>)}
+                )}
               </div>
             </div>
           </div>
         </main>
-
-        <img src={trabajadorImg} alt='imagen_trabajador' className='img-container' />
+        <img src={trabajadorImg} alt="imagen_trabajador" className="img-container" />
       </div>
 
-      {/* Nuevo contenedor para el carrusel */}
-      <section className="categorias-carousel-container">
+      {/* Contenedor para el carrusel */}
+      <section className="popular-services-carousel-container">
         <h3>Servicios populares</h3>
-        <div className="carousel">
-          <button className="carousel-btn left-btn" onClick={handlePrev}>{"<"}</button>
-          <div className="carousel-track">
+        <div className="custom-carousel">
+          <button className="custom-carousel-btn custom-left-btn" onClick={handlePrev}>
+            {"<"}
+          </button>
+          <div
+            className="custom-carousel-track"
+            style={{ transform: `translateX(-${currentIndex * 210}px)` }}
+          >
             {categoriasMadre.slice(currentIndex, currentIndex + itemsPerPage).map((categoria) => (
-              <div className="carousel-item" key={categoria.id}>
-                <img src={categoria.imagen || 'ruta/a/imagen/default.png'} alt={categoria.nombre} />
-                <p>{categoria.nombre}</p>
+              <div className="custom-carousel-item" key={categoria.id}>
+                <img
+                  src={imagenesCategoria[categoria.nombre] || 'ruta/a/imagen/default.png'}
+                  alt={categoria.nombre}
+                />
+                <p className="custom-carousel-name">{categoria.nombre}</p>
               </div>
             ))}
           </div>
-          <button className="carousel-btn right-btn" onClick={handleNext}>{">"}</button>
+          <button className="custom-carousel-btn custom-right-btn" onClick={handleNext}>
+            {">"}
+          </button>
         </div>
-        <a href="/categorias" className="ver-todas">Ver todas las categorías</a>
+        <a href="/categorias" className="view-all-categories">Ver todas las categorías</a>
       </section>
     </div>
   );
