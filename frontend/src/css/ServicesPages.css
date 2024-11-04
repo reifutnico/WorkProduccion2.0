@@ -1,0 +1,60 @@
+/* Estilo para la tarjeta de cada servicio */
+.service-card {
+    display: flex;
+    flex-direction: column; /* Cambiar a columna para apilar elementos verticalmente */
+    align-items: stretch; /* Hacer que los elementos ocupen el ancho completo */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 15px auto;
+    padding: 15px;
+    max-width: 600px;
+    transition: transform 0.3s;
+}
+
+/* Estilo para el botón "Editar Disponibilidad" */
+.service-card button {
+    padding: 10px; /* Tamaño del botón */
+    background-color: #4CAF50; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor en forma de mano al pasar el ratón */
+    font-size: 1em; /* Tamaño de fuente */
+    width: 100%; /* Hacer que el botón ocupe el 100% del ancho del contenedor */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+    text-align: center; /* Centrar el texto */
+    margin-top: 10px; /* Espacio arriba del botón */
+}
+
+.service-card button:hover {
+    background-color: #45a049; /* Color de fondo al pasar el ratón */
+    transform: translateY(-2px); /* Levanta el botón un poco */
+}
+
+.service-card button:active {
+    transform: translateY(1px); /* Efecto de pulsar el botón */
+}
+
+/* Texto de los servicios */
+.service-details {
+    flex: 1; /* Permitir que los detalles ocupen espacio restante */
+}
+
+.service-details h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin: 0 0 8px;
+}
+
+.service-details p {
+    font-size: 1em;
+    color: #666;
+    margin: 4px 0;
+}
+
+.service-details .price {
+    font-weight: bold;
+    color: #4CAF50;
+    font-size: 1.1em;
+}

@@ -39,6 +39,16 @@ const Horario = () => {
     fetchSchedule();
   }, [serviceId]);
 
+  const checkReservations = async (Disponibilidades) => {
+    try {
+      const response = await axios.post(`http://localhost:5000/Reservas/Check`, Disponibilidades);
+      return response.data.hasReservations; // Supongamos que el backend devuelve { hasReservations: true/false }
+    } catch (error) {
+      console.error('Error al verificar reservas:', error);
+      return false; // Considerar que no hay reservas en caso de error
+    }
+  };
+  
   const newDisponibilidad = async (e) => {
     e.preventDefault();
     let check = validateForm();

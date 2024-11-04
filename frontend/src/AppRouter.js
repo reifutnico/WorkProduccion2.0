@@ -10,8 +10,9 @@ import Login from './componentes/login';
 import Register from './componentes/register';
 import Confirm from './componentes/confirm';
 import ConfirmToken from './componentes/confirmToken';
-import { UserProvider, UserContext } from './context/UserContext'; 
-
+import { UserProvider} from './context/UserContext'; 
+import TurnoReservadoInfo from './componentes/TurnoReservadoInfo.js';
+import ServicesPage from './componentes/ServicesPages.js'
 
 const AppRouter = () => (
   <UserProvider>
@@ -27,6 +28,8 @@ const AppRouter = () => (
       <Route path="/register" element={<Register />} />
       <Route path="/confirm" element={<Confirm />} />
       <Route path="/confirm/:token" element={<ConfirmToken />} />
+      <Route path="/ServicesPages" element={<ServicesPage />} />
+      <Route path="/turnoReservadoInfo/:turnoReservadoId" element={<TurnoReservadoInfo />} />
     </Routes>
   </Router>
   </UserProvider>

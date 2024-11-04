@@ -1,4 +1,3 @@
-// Navbar.js
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -20,7 +19,7 @@ const Navbar = () => {
   const [data, setData] = useState([]);
   const [hasData, setHasData] = useState(false);
 
-  const { token, user, logout } = useContext(UserContext);
+  const { token, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -139,11 +138,6 @@ const Navbar = () => {
             <button className="logout-btn" onClick={handleLogout}>
               Cerrar sesión
             </button>
-            <div className="hamburger-icon" onClick={toggleMenu}>
-            <div className="line"></div>
-            <div className="line"></div>
-            <div className="line"></div>
-        </div>
           </>
         ) : (
           <div className="navbar-buttons">
@@ -153,50 +147,84 @@ const Navbar = () => {
             </a>
           </div>
         )}
+        <div className="hamburger-icon" onClick={toggleMenu}>
+          <div className="line"></div>
+          <div className="line"></div>
+          <div className="line"></div>
+        </div>
+      </div>
+
+      {/* Menú hamburguesa desplegable */}
+      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
+        <span className="close-menu" onClick={toggleMenu}>×</span>
+        <div className="menu-content">
+          {categoriasMadre.map((categoria) => (
+            <a
+              key={categoria.id}
+              href="#"
+              onClick={() => {
+                handleSearch(categoria.nombre);
+                toggleMenu();
+              }}
+            >
+              {categoria.nombre}
+            </a>
+          ))}
+        </div>
       </div>
 
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
         <Login />
       </Modal>
 
-      <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
-        <div className="notifications-content">
+    <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
+      <div className="notifications-content">
           {data.length === 0 ? (
-            <p>No tienes turnos reservados.</p>
+              <p>No tienes turnos reservados.</p>
           ) : (
-            data.map((turnoReservado, index) => {
-              const fecha = format(new Date(turnoReservado.fecha), 'dd/MM/yyyy');
+              data.map((turnoReservado, index) => {
+                  // Convierte cada fecha y hora en objetos Date y añade 3 horas
+                  const fechaObj = new Date(turnoReservado.fecha);
+                  fechaObj.setHours(fechaObj.getHours() + 3);
 
-              const formatHourMinute = (date) => {
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                return `${hours}:${minutes}`;
-              };
+                  const comienzoObj = new Date(turnoReservado.comienzo);
+                  comienzoObj.setHours(comienzoObj.getHours() + 3);
 
-              const comienzo = formatHourMinute(new Date(turnoReservado.comienzo));
-              const final = formatHourMinute(new Date(turnoReservado.final));
+                  const finalObj = new Date(turnoReservado.final);
+                  finalObj.setHours(finalObj.getHours() + 3);
 
-              return (
-                <div key={index} className="turno-item">
-                  <h3 className="turno-title">Turno a confirmar</h3>
-                  <div className="modal-items">
-                    <div className="modal-item">
-                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p> 
-                      <p><strong>Fecha:</strong> {fecha}</p>
-                    </div>
-                    <div className="modal-item">
-                      <p><strong>Comienzo:</strong> {comienzo}</p>
-                      <p><strong>Final:</strong> {final}</p>
-                    </div>
-                    <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
-                    <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
-                  </div>
-                </div>
-              );
-            })
+                  // Formatea fecha y horas
+                  const fecha = format(fechaObj, 'dd/MM/yyyy');
+                  const formatHourMinute = (date) => {
+                      const hours = String(date.getHours()).padStart(2, '0');
+                      const minutes = String(date.getMinutes()).padStart(2, '0');
+                      return `${hours}:${minutes}`;
+                  };
+                  const comienzo = formatHourMinute(comienzoObj);
+                  const final = formatHourMinute(finalObj);
+
+                  return (
+                      <div key={index} className="turno-item">
+                          <h3 className="turno-title">Turno a confirmar</h3>
+                          <div className="modal-items">
+                              <div className="modal-item">
+                                  <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
+                                  <p><strong>Fecha:</strong> {fecha}</p>
+                              </div>
+                              <div className="modal-item">
+                                  <p><strong>Comienzo:</strong> {comienzo}</p>
+                                  <p><strong>Final:</strong> {final}</p>
+                              </div>
+                              <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
+                              <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
+                          </div>
+                          <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>+info</button>
+                      </div>
+                  );
+              })
           )}
-        </div>
-      </ModalNotificaciones>
+      </div>
+    </ModalNotificaciones>
     </nav>
   );
 };

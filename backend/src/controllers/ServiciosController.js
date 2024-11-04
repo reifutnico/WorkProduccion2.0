@@ -8,6 +8,25 @@ const servicioService = new ServicioService();
 import authMiddleware from "../../auth/authMiddleware.js";
 
 
+
+router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res) => {
+    const idTurnoReservado = parseInt(req.params.turnoReservadoId, 10);
+    console.log(`ID del turno reservado: ${idTurnoReservado}`);
+    if (isNaN(idTurnoReservado)) {
+        return res.status(400).json({ error: 'ID del turno reservado inválido.' });
+    }
+    try {
+        const turnoInfo = await servicioService.obtenerInfoTurnoReservado(idTurnoReservado);
+        if (!turnoInfo) {
+            return res.status(404).json({ error: 'No se encontró el turno reservado.' });
+        }
+        res.status(200).json({ data: turnoInfo });
+    } catch (error) {
+        console.error('Error al obtener la información del turno reservado:', error);
+        res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud.' });
+    }
+});
+
 router.put("/turnoPendiente/:id", authMiddleware, async (req, res) => {
     const idTurnoReservado = parseInt(req.params.id, 10);
     const estado = req.query.estado;
@@ -200,24 +219,18 @@ router.get("/TurnosReservados/:id", async (req, res) => {
     }
 });
 
-router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res) => {
-    const idTurnoReservado = parseInt(req.params.turnoReservadoId, 10);
-    console.log(`ID del turno reservado: ${idTurnoReservado}`);
-    if (isNaN(idTurnoReservado)) {
-        return res.status(400).json({ error: 'ID del turno reservado inválido.' });
-    }
 
+router.get("/creados", authMiddleware, async (req, res) => {
+    const idUsuario = req.user.id;
     try {
-        const turnoInfo = await turnoService.obtenerInfoTurnoReservado(idTurnoReservado);
-        if (!turnoInfo) {
-            return res.status(404).json({ error: 'No se encontró el turno reservado.' });
-        }
-        res.status(200).json({ data: turnoInfo });
+        const serviciosContratados = await servicioService.obtenerServiciosCreados(idUsuario);
+        res.status(200).json(serviciosContratados);
     } catch (error) {
-        console.error('Error al obtener la información del turno reservado:', error);
-        res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud.' });
+        console.error('Error al obtener servicios creados:', error);
+        res.status(500).json({ error: error.message });
     }
 });
+
 
 
 
