@@ -117,13 +117,15 @@ h3 {
   position: relative;
   overflow: hidden;
   width: 100%;
-  max-width: 80%; /* Ajusta el ancho del carrusel */
-  margin: auto; /* Centra el carrusel */
+  max-width: 80%;
+  margin: auto;
 }
 
 .custom-carousel-track {
   display: flex;
   transition: transform 0.3s ease-in-out;
+  width: 100%;
+  justify-content: center;
 }
 
 .custom-carousel-item {
@@ -159,18 +161,17 @@ h3 {
   color: #ffcc00;
   font-weight: bold;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  /* Quitar ancho y hover */
+  z-index: 10000;
   transition: none;
+  width: auto;
 }
 
 .custom-left-btn {
-  left: -50px; /* Posiciona la flecha izquierda fuera del carrusel */
+  left: 0;
 }
 
 .custom-right-btn {
-  right: -50px; /* Posiciona la flecha derecha fuera del carrusel */
+  right: 0;
 }
 
 .view-all-categories {
@@ -183,7 +184,4 @@ h3 {
 
 .view-all-categories:hover {
   text-decoration: underline;
-}
-.custom-carousel-btn{
-  width: 10;
 }
