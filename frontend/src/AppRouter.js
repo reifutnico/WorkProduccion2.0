@@ -13,7 +13,6 @@ import ConfirmToken from './componentes/confirmToken';
 import { UserProvider} from './context/UserContext'; 
 import TurnoReservadoInfo from './componentes/TurnoReservadoInfo.js';
 
-
 const AppRouter = () => (
   <UserProvider>
   <Router>
@@ -28,6 +27,7 @@ const AppRouter = () => (
       <Route path="/register" element={<Register />} />
       <Route path="/confirm" element={<Confirm />} />
       <Route path="/confirm/:token" element={<ConfirmToken />} />
+      <Route path="/ServicesPages" element={<ServicesPages />} />
       <Route path="/turnoReservadoInfo/:turnoReservadoId" element={<TurnoReservadoInfo />} />
     </Routes>
   </Router>

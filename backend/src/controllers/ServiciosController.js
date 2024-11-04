@@ -219,6 +219,25 @@ router.get("/TurnosReservados/:id", async (req, res) => {
     }
 });
 
+router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res) => {
+    const idTurnoReservado = parseInt(req.params.turnoReservadoId, 10);
+    console.log(`ID del turno reservado: ${idTurnoReservado}`);
+    if (isNaN(idTurnoReservado)) {
+        return res.status(400).json({ error: 'ID del turno reservado inválido.' });
+    }
+
+    try {
+        const turnoInfo = await turnoService.obtenerInfoTurnoReservado(idTurnoReservado);
+        if (!turnoInfo) {
+            return res.status(404).json({ error: 'No se encontró el turno reservado.' });
+        }
+        res.status(200).json({ data: turnoInfo });
+    } catch (error) {
+        console.error('Error al obtener la información del turno reservado:', error);
+        res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud.' });
+    }
+});
+
 
 
 
