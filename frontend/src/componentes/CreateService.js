@@ -5,6 +5,7 @@ import '../css/CreateService.css';
 import { UserContext } from '../context/UserContext';
 
 const CreateService = ({ setService }) => {
+  
   const [NewNombre, setNewNombre] = useState('');
   const [NewPrecio, setNewPrecio] = useState('');
   const [NewCategoria, setNewCategoria] = useState('');
@@ -14,8 +15,9 @@ const CreateService = ({ setService }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [categorias, setCategorias] = useState([]);
-  const {token, user} = useContext(UserContext)
+  const {token} = useContext(UserContext)
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
