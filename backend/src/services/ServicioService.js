@@ -133,6 +133,13 @@ export default class ServicioService {
     }
 
 
+    async obtenerServiciosContratados(idUsuario) {
+        try {
+            return await servicioRepository.ObtenerServiciosContratados(idUsuario);
+        } catch (error) {
+           throw new Error('Error al en el estado');
+        }
+    }
     
 
 

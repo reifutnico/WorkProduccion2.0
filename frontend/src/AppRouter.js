@@ -13,6 +13,7 @@ import ConfirmToken from './componentes/confirmToken';
 import { UserProvider} from './context/UserContext'; 
 import TurnoReservadoInfo from './componentes/TurnoReservadoInfo.js';
 import ServicesPage from './componentes/ServicesPages.js'
+import ServiciosContratados from './componentes/ServiciosContratados.js';
 
 const AppRouter = () => (
   <UserProvider>
@@ -30,6 +31,7 @@ const AppRouter = () => (
       <Route path="/confirm/:token" element={<ConfirmToken />} />
       <Route path="/ServicesPages" element={<ServicesPage />} />
       <Route path="/turnoReservadoInfo/:turnoReservadoId" element={<TurnoReservadoInfo />} />
+      <Route path="/ServiciosContratados" element={<ServiciosContratados />} />
     </Routes>
   </Router>
   </UserProvider>

@@ -37,6 +37,7 @@ const TurnoReservadoInfo = () => {
                     comienzo: formattedComienzo,
                     final: formattedFinal,
                 });
+                console.log(turnoInfo);
             } catch (error) {
                 console.error('Error al obtener la información del turno reservado:', error);
             } finally {

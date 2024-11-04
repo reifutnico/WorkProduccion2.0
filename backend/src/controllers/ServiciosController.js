@@ -223,10 +223,21 @@ router.get("/TurnosReservados/:id", async (req, res) => {
 router.get("/creados", authMiddleware, async (req, res) => {
     const idUsuario = req.user.id;
     try {
-        const serviciosContratados = await servicioService.obtenerServiciosCreados(idUsuario);
-        res.status(200).json(serviciosContratados);
+        const serviciosCreados = await servicioService.obtenerServiciosCreados(idUsuario);
+        res.status(200).json(serviciosCreados);
     } catch (error) {
         console.error('Error al obtener servicios creados:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get("/contratados", authMiddleware, async (req, res) => {
+    const idUsuario = req.user.id;
+    try {
+        const serviciosContratados = await servicioService.obtenerServiciosContratados(idUsuario);
+        res.status(200).json(serviciosContratados);
+    } catch (error) {
+        console.error('Error al obtener servicios contratados:', error);
         res.status(500).json({ error: error.message });
     }
 });
