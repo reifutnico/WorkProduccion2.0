@@ -8,6 +8,25 @@ const servicioService = new ServicioService();
 import authMiddleware from "../../auth/authMiddleware.js";
 
 
+
+router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res) => {
+    const idTurnoReservado = parseInt(req.params.turnoReservadoId, 10);
+    console.log(`ID del turno reservado: ${idTurnoReservado}`);
+    if (isNaN(idTurnoReservado)) {
+        return res.status(400).json({ error: 'ID del turno reservado inválido.' });
+    }
+    try {
+        const turnoInfo = await servicioService.obtenerInfoTurnoReservado(idTurnoReservado);
+        if (!turnoInfo) {
+            return res.status(404).json({ error: 'No se encontró el turno reservado.' });
+        }
+        res.status(200).json({ data: turnoInfo });
+    } catch (error) {
+        console.error('Error al obtener la información del turno reservado:', error);
+        res.status(500).json({ error: 'Ocurrió un error al procesar la solicitud.' });
+    }
+});
+
 router.put("/turnoPendiente/:id", authMiddleware, async (req, res) => {
     const idTurnoReservado = parseInt(req.params.id, 10);
     const estado = req.query.estado;
@@ -219,6 +238,7 @@ router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res)
     }
 });
 
+<<<<<<< HEAD
 router.get("/creados", authMiddleware, async (req, res) => {
     const idUsuario = req.user.id;
     try {
@@ -232,6 +252,8 @@ router.get("/creados", authMiddleware, async (req, res) => {
 
 
 
+=======
+>>>>>>> 4b31e9296496de221de034c3b728a1bac0a5c3c4
 
 
 

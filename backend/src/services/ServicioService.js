@@ -103,18 +103,16 @@ export default class ServicioService {
     }
 
     async cambiarEstado(idTurnoReservado, estado) {
-        // Validación de parámetros
         if (idTurnoReservado == null || estado == null) {
             throw new Error('idTurnoReservado y estado son obligatorios.');
         }
-    
         try {
             console.log('Cambiando estado:', { idTurnoReservado, estado });
             const resultado = await servicioRepository.cambiarEstado(idTurnoReservado, estado);
-            return resultado; // Retorna el resultado del repositorio
+            return resultado;
         } catch (error) {
-            console.error('Error al cambiar el estado:', error); // Registro del error original
-            throw new Error(`Error al cambiar el estado del turno reservado: ${error.message}`); // Propagar el error con mensaje específico
+            console.error('Error al cambiar el estado:', error);
+            throw new Error(`Error al cambiar el estado del turno reservado: ${error.message}`);
         }
     }
     

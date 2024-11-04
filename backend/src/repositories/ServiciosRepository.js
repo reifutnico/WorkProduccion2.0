@@ -394,27 +394,25 @@ export default class ServicioRepository {
             }
         } catch (error) {
             console.error('Error al cambiar el estado:', error.stack);
-            throw error; // Manejo del error
+            throw error;
         } finally {
             pool.close();
         }
     }
     async obtenerInfoTurnoReservado(turnoReservadoId) {
         try {
-            const pool = await sql.connect(config);
-            const result = await pool.request()
-                .input('turnoReservadoId', sql.Int, turnoReservadoId)
-                .query(`
-                    SELECT 
-                        tr.id AS turnoReservadoId,
-                        tr.fecha,
-                        uContratador.Nombre AS nombreContratador,
-                        uCreador.Nombre AS nombreCreadorServicio,
-                        s.Nombre AS nombreServicio,
-                        c.Nombre AS tipoServicio,
-                        t.comienzo,
-                        t.final,
-                        'Ubicación placeholder' AS ubicacion
+            const pool = await getConnection();
+            const request = pool.request();
+            const query = `SELECT 
+                    tr.id AS turnoReservadoId,
+                    tr.fecha,
+                    uContratador.Nombre AS nombreContratador,
+                    uCreador.Nombre AS nombreCreadorServicio,
+                    s.Nombre AS nombreServicio,
+                    c.Nombre AS tipoServicio,
+                    t.comienzo,
+                    t.final,
+                    'Ubicación placeholder' AS ubicacion
                     FROM 
                         turnosReservados AS tr
                     JOIN 
@@ -430,9 +428,10 @@ export default class ServicioRepository {
                     JOIN 
                         Usuarios AS uCreador ON s.idCreador = uCreador.id
                     WHERE 
-                        tr.id = @turnoReservadoId;
-                `);
-    
+                        tr.idTurno = @turnoReservadoId;`
+            request.input('turnoReservadoId', sql.Int, turnoReservadoId)
+            console.log(query)
+            const result = await request.query(query)
             return result.recordset[0];
         } catch (error) {
             console.error('Error al obtener la información del turno reservado:', error);

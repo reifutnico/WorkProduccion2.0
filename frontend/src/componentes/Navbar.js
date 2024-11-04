@@ -19,7 +19,7 @@ const Navbar = () => {
   const [data, setData] = useState([]);
   const [hasData, setHasData] = useState(false);
 
-  const { token, user, logout } = useContext(UserContext);
+  const { token, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -206,6 +206,7 @@ const Navbar = () => {
                     <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
                     <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
                   </div>
+                  <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>+info</button>
                 </div>
               );
             })
