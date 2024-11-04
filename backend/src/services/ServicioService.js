@@ -125,4 +125,23 @@ export default class ServicioService {
            throw new Error('Error al en el estado');
         }
     }
+
+    async obtenerServiciosContratados(idUsuario) {
+        try {
+            const query = `
+                SELECT s.id, s.Nombre, s.Descripcion, s.Foto, s.Precio
+                FROM Servicios s
+                JOIN Contratos c ON c.idServicio = s.id
+                WHERE c.idUsuario = @idUsuario
+            `;
+            const result = await pool.request()
+                .input('idUsuario', idUsuario)
+                .query(query);
+            return result.recordset;
+        } catch (error) {
+            console.error('Error al obtener servicios contratados:', error);
+            throw new Error('Error al obtener servicios contratados');
+        }
+    }
+    
 }

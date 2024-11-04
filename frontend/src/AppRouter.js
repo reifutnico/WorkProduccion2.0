@@ -27,6 +27,7 @@ const AppRouter = () => (
       <Route path="/register" element={<Register />} />
       <Route path="/confirm" element={<Confirm />} />
       <Route path="/confirm/:token" element={<ConfirmToken />} />
+      <Route path="/ServicesPages" element={<ServicesPages />} />
     </Routes>
   </Router>
   </UserProvider>
