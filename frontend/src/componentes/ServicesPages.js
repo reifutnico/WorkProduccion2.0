@@ -12,7 +12,7 @@ const ServicesPage = () => {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/servicios/contratados`, {
+                const response = await axios.get(`http://localhost:5000/api/servicios/creados`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -32,7 +32,7 @@ const ServicesPage = () => {
 
     return (
         <div>
-            <h1>Servicios Contratados</h1>
+            <h1>Servicios Creados</h1>
             {services.length > 0 ? (
                 services.map((service) => (
                     <div key={service.id} className="service-card">
@@ -43,7 +43,7 @@ const ServicesPage = () => {
                     </div>
                 ))
             ) : (
-                <p>No tienes servicios contratados</p>
+                <p>No tienes servicios creados</p>
             )}
         </div>
     );

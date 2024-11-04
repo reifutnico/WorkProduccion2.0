@@ -439,4 +439,25 @@ export default class ServicioRepository {
             throw error;
         }
     }
+
+
+    async obtenerServiciosCreados(idUsuario) {
+        const pool = await getConnection();
+        const request = pool.request();
+        try {
+            const query = `
+                SELECT s.id, s.Nombre, s.Descripcion, s.Foto, s.Precio
+                FROM Servicios s
+                WHERE s.idCreador = @idUsuario
+            `;
+            request.input('idUsuario', sql.Int, idUsuario);
+            const result = await request.query(query);
+            return result.recordset;
+        } catch (error) {
+            console.error('Error al obtener reservas:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
 }
