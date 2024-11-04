@@ -6,16 +6,16 @@ import '../css/index.css';
 import { UserContext } from '../context/UserContext';
 import artistaImg from '../img/artista.jpg';
 import entrenadorImg from '../img/entrenador.jpg';
-import gasistaImg from '../img/gasista.jpeg';
-import plomeroImg from '../img/plomero.jpg';
+import gasistasImg from '../img/gasistas.jpg';
+import plomeriaImg from '../img/plomeria.jpg';
 import programadorImg from '../img/programador.jpg';
 
 const imagenesCategoria = {
-  Artista: artistaImg,
-  Entrenador: entrenadorImg,
-  Gasista: gasistaImg,
-  Plomero: plomeroImg,
-  Programador: programadorImg,
+  Plomeria: plomeriaImg,       // Cambiado a "Plomeria" para coincidir con la categoría
+  Artista: artistaImg,         // Mantener como "Artista"
+  Gasistas: gasistasImg,       // Cambiado a "Gasistas" para coincidir con la categoría
+  Entrenador: entrenadorImg,   // Mantener como "Entrenador"
+  Programador: programadorImg  // Mantener como "Programador"
 };
 
 const Index = () => {
