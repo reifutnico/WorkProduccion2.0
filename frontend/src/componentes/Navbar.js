@@ -1,4 +1,3 @@
-// Navbar.js
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -139,11 +138,6 @@ const Navbar = () => {
             <button className="logout-btn" onClick={handleLogout}>
               Cerrar sesión
             </button>
-            <div className="hamburger-icon" onClick={toggleMenu}>
-            <div className="line"></div>
-            <div className="line"></div>
-            <div className="line"></div>
-        </div>
           </>
         ) : (
           <div className="navbar-buttons">
@@ -153,6 +147,30 @@ const Navbar = () => {
             </a>
           </div>
         )}
+        <div className="hamburger-icon" onClick={toggleMenu}>
+          <div className="line"></div>
+          <div className="line"></div>
+          <div className="line"></div>
+        </div>
+      </div>
+
+      {/* Menú hamburguesa desplegable */}
+      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
+        <span className="close-menu" onClick={toggleMenu}>×</span>
+        <div className="menu-content">
+          {categoriasMadre.map((categoria) => (
+            <a
+              key={categoria.id}
+              href="#"
+              onClick={() => {
+                handleSearch(categoria.nombre);
+                toggleMenu();
+              }}
+            >
+              {categoria.nombre}
+            </a>
+          ))}
+        </div>
       </div>
 
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
@@ -166,22 +184,19 @@ const Navbar = () => {
           ) : (
             data.map((turnoReservado, index) => {
               const fecha = format(new Date(turnoReservado.fecha), 'dd/MM/yyyy');
-
               const formatHourMinute = (date) => {
                 const hours = String(date.getHours()).padStart(2, '0');
                 const minutes = String(date.getMinutes()).padStart(2, '0');
                 return `${hours}:${minutes}`;
               };
-
               const comienzo = formatHourMinute(new Date(turnoReservado.comienzo));
               const final = formatHourMinute(new Date(turnoReservado.final));
-
               return (
                 <div key={index} className="turno-item">
                   <h3 className="turno-title">Turno a confirmar</h3>
                   <div className="modal-items">
                     <div className="modal-item">
-                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p> 
+                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
                       <p><strong>Fecha:</strong> {fecha}</p>
                     </div>
                     <div className="modal-item">
