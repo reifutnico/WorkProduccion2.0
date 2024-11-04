@@ -124,13 +124,17 @@ export default class ServicioService {
         }
     }
 
-
-    async obtenerServiciosContratados(idUsuario) {
+    async obtenerServiciosCreados(idUsuario) {
         try {
-            return await servicioRepository.obtenerServiciosContratados(idUsuario);
+            return await servicioRepository.obtenerServiciosCreados(idUsuario);
         } catch (error) {
            throw new Error('Error al en el estado');
         }
     }
+
+
+    
+
+
     
 }

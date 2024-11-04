@@ -230,6 +230,22 @@ router.get("/creados", authMiddleware, async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+router.get("/creados", authMiddleware, async (req, res) => {
+    const idUsuario = req.user.id;
+    try {
+        const serviciosContratados = await servicioService.obtenerServiciosCreados(idUsuario);
+        res.status(200).json(serviciosContratados);
+    } catch (error) {
+        console.error('Error al obtener servicios creados:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+=======
+>>>>>>> 4b31e9296496de221de034c3b728a1bac0a5c3c4
 
 
 export default router;

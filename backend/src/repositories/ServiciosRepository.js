@@ -439,7 +439,8 @@ export default class ServicioRepository {
         }
     }
 
-    async obtenerServiciosContratados(idUsuario) {
+
+    async obtenerServiciosCreados(idUsuario) {
         const pool = await getConnection();
         const request = pool.request();
         try {
