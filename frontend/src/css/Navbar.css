@@ -92,77 +92,100 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  margin-left: auto;
-  margin-right: 0; /* Alineado al extremo derecho */
+  margin-left: 20px;
+  padding: 10px;
 }
-
-.hamburger-btn {
-  margin-left: 20px; /* Espacio para el botón hamburguesa */
-  margin-right: 20px; /* Aumentar separación con botones de sesión */
-  background: none;
-  border: none;
-  font-size: 24px; /* Ajustar tamaño del ícono */
-  cursor: pointer;
-}
-
 
 .hamburger-icon .line {
-  height: 4px;
-  width: 30px;
+  height: 3px;
+  width: 25px;
   background-color: #333;
   margin: 4px 0;
   transition: all 0.3s ease;
 }
 
-/* Menú desplegable */
+/* Menú overlay */
 .menu-overlay {
   position: fixed;
   top: 0;
   right: -100%;
-  width: 300px; /* Ancho del menú deslizante */
+  width: 300px;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  transition: right 0.4s ease; /* Animación para deslizar */
-  z-index: 10;
-  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.95);
+  transition: right 0.3s ease;
+  z-index: 1000;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .menu-overlay.open {
-  right: 0; /* Cambiar a 0 cuando esté abierto */
+  right: 0;
 }
 
-/* Cruz de cierre */
+/* Botón de cierre */
 .close-menu {
-  font-size: 30px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
   color: #fff;
+  font-size: 28px;
   cursor: pointer;
-  align-self: flex-end; /* Alinear cruz a la parte superior derecha */
-  margin: 10px;
+  transition: transform 0.3s ease;
 }
 
-/* Enlaces del menú hamburguesa en columna vertical, alineados a la derecha */
+.close-menu:hover {
+  transform: rotate(90deg);
+}
+
+/* Contenido del menú */
 .menu-content {
+  padding: 60px 30px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-end; /* Alineación al lado derecho */
-  gap: 20px; /* Espacio entre los enlaces */
-  width: 100%;
-  padding: 0 20px;
+  align-items: flex-start; /* Cambiado a flex-start para que se alineen al borde izquierdo del contenedor */
+  gap: 25px;
 }
 
-.menu-content a {
+/* Items del menú */
+.menu-item {
+  display: flex;
+  align-items: center;
   color: #fff;
-  font-size: 18px;
-  text-decoration: none;
-  padding: 10px 20px;
+  cursor: pointer;
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%; /* Esto asegura que el item ocupe todo el ancho del contenedor */
+  text-align: left; /* Alinea el texto hacia la izquierda */
 }
 
-.menu-content a:hover {
-  color: #008000;
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(10px); /* Mueve el item ligeramente a la derecha en hover */
+}
+
+.menu-item span {
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+/* Iconos del menú */
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+
+/* Ajuste responsivo */
+@media (max-width: 768px) {
+  .menu-overlay {
+    width: 100%;
+  }
+  
+  .menu-item {
+    justify-content: center;
+  }
 }
 
 

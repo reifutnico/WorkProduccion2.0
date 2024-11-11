@@ -40,7 +40,6 @@ const Navbar = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
-      console.log(data);
     } catch (error) {
       console.error('Error al buscar :', error);
     }
@@ -81,7 +80,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate('/');
   };
 
   const toggleMenu = () => {
@@ -103,6 +102,28 @@ const Navbar = () => {
     if (token) {
       await fetchData();
       setNotificationsOpen(true);
+    }
+  };
+
+  const handleMenuOptionClick = (option) => {
+    if (token) {
+      switch (option) {
+        case 'perfil':
+          navigate('/perfil-servicio'); // Cambia la ruta a la de tu página de perfil
+          break;
+        case 'servicios':
+          navigate('/ServiciosContratados'); // Cambia la ruta a la de tu página de servicios contratados
+          break;
+        case 'mis-servicios':
+          navigate('/ServicesPages'); // Cambia la ruta a la de "Mis Servicios"
+          break;
+        default:
+          break;
+      }
+      setMenuOpen(false);
+    } else {
+      setLoginOpen(true);
+      setMenuOpen(false);
     }
   };
 
@@ -154,22 +175,22 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Menú hamburguesa desplegable */}
+      {/* Menú hamburguesa */}
       <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
-        <span className="close-menu" onClick={toggleMenu}>×</span>
+        <span className="close-menu" onClick={() => setMenuOpen(false)}>X</span>
         <div className="menu-content">
-          {categoriasMadre.map((categoria) => (
-            <a
-              key={categoria.id}
-              href="#"
-              onClick={() => {
-                handleSearch(categoria.nombre);
-                toggleMenu();
-              }}
-            >
-              {categoria.nombre}
-            </a>
-          ))}
+          <div className="menu-item" onClick={() => handleMenuOptionClick('perfil')}>
+            <span>Mi Perfil</span>
+            <i className="menu-icon profile-icon"></i>
+          </div>
+          <div className="menu-item" onClick={() => handleMenuOptionClick('servicios')}>
+            <span>Servicios Contratados</span>
+            <i className="menu-icon services-icon"></i>
+          </div>
+          <div className="menu-item" onClick={() => handleMenuOptionClick('mis-servicios')}>
+            <span>Mis Servicios</span>
+            <i className="menu-icon mis-servicios-icon"></i>
+          </div>
         </div>
       </div>
 
@@ -177,54 +198,52 @@ const Navbar = () => {
         <Login />
       </Modal>
 
-    <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
-      <div className="notifications-content">
+      <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
+        <div className="notifications-content">
           {data.length === 0 ? (
-              <p>No tienes turnos reservados.</p>
+            <p>No tienes turnos reservados.</p>
           ) : (
-              data.map((turnoReservado, index) => {
-                  // Convierte cada fecha y hora en objetos Date y añade 3 horas
-                  const fechaObj = new Date(turnoReservado.fecha);
-                  fechaObj.setHours(fechaObj.getHours() + 3);
+            data.map((turnoReservado, index) => {
+              const fechaObj = new Date(turnoReservado.fecha);
+              fechaObj.setHours(fechaObj.getHours() + 3);
 
-                  const comienzoObj = new Date(turnoReservado.comienzo);
-                  comienzoObj.setHours(comienzoObj.getHours() + 3);
+              const comienzoObj = new Date(turnoReservado.comienzo);
+              comienzoObj.setHours(comienzoObj.getHours() + 3);
 
-                  const finalObj = new Date(turnoReservado.final);
-                  finalObj.setHours(finalObj.getHours() + 3);
+              const finalObj = new Date(turnoReservado.final);
+              finalObj.setHours(finalObj.getHours() + 3);
 
-                  // Formatea fecha y horas
-                  const fecha = format(fechaObj, 'dd/MM/yyyy');
-                  const formatHourMinute = (date) => {
-                      const hours = String(date.getHours()).padStart(2, '0');
-                      const minutes = String(date.getMinutes()).padStart(2, '0');
-                      return `${hours}:${minutes}`;
-                  };
-                  const comienzo = formatHourMinute(comienzoObj);
-                  const final = formatHourMinute(finalObj);
+              const fecha = format(fechaObj, 'dd/MM/yyyy');
+              const formatHourMinute = (date) => {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+              };
+              const comienzo = formatHourMinute(comienzoObj);
+              const final = formatHourMinute(finalObj);
 
-                  return (
-                      <div key={index} className="turno-item">
-                          <h3 className="turno-title">Turno a confirmar</h3>
-                          <div className="modal-items">
-                              <div className="modal-item">
-                                  <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
-                                  <p><strong>Fecha:</strong> {fecha}</p>
-                              </div>
-                              <div className="modal-item">
-                                  <p><strong>Comienzo:</strong> {comienzo}</p>
-                                  <p><strong>Final:</strong> {final}</p>
-                              </div>
-                              <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
-                              <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
-                          </div>
-                          <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>+info</button>
-                      </div>
-                  );
-              })
+              return (
+                <div key={index} className="turno-item">
+                  <h3 className="turno-title">Turno a confirmar</h3>
+                  <div className="modal-items">
+                    <div className="modal-item">
+                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
+                      <p><strong>Fecha:</strong> {fecha}</p>
+                    </div>
+                    <div className="modal-item">
+                      <p><strong>Comienzo:</strong> {comienzo}</p>
+                      <p><strong>Final:</strong> {final}</p>
+                    </div>
+                    <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
+                    <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
+                  </div>
+                  <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>Ver detalles</button>
+                </div>
+              );
+            })
           )}
-      </div>
-    </ModalNotificaciones>
+        </div>
+      </ModalNotificaciones>
     </nav>
   );
 };
