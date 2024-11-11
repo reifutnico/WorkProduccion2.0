@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import trabajadorImg from '../img/trabajadorIndex.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/index.css';
-import { UserContext } from '../context/UserContext';
 import artistaImg from '../img/artista.jpg';
 import entrenadorImg from '../img/entrenador.jpg';
 import gasistasImg from '../img/gasistas.jpg';
@@ -18,26 +17,21 @@ const imagenesCategoria = {
   Programador: programadorImg
 };
 
+const ITEMS_PER_SCROLL = 1; // Avanzar solo un ítem por clic
+
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modo, setModo] = useState("Nombre");
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselTrackRef = useRef(null);
   const navigate = useNavigate();
-  const itemsPerPage = 3;
-  const { token, user, joinWorky } = useContext(UserContext);
-
-  useEffect(() => {
-    if (user) {
-      console.log(user.miembro);
-    }
-  }, [user]);
 
   useEffect(() => {
     const fetchCategoriasMadre = async () => {
       try {
         const response = await axios.get('http://localhost:5000/Categoria/categoriasMadre');
-        setCategoriasMadre(response.data);
+        setCategoriasMadre([...response.data, ...response.data, ...response.data]);
       } catch (error) {
         console.error('Error al buscar CategoriasMadre:', error);
       }
@@ -45,26 +39,30 @@ const Index = () => {
     fetchCategoriasMadre();
   }, []);
 
-  const handleJoinWorky = async () => {
-    try {
-      const success = await joinWorky();
-      if (success) {
-        alert('Bienvenido a workyyyy');
-      }
-    } catch (error) {
-      alert('Hubo un error al unirse a Worky. Por favor, intente nuevamente.');
-    }
-  };
-
   const handleNext = () => {
-    if (currentIndex < categoriasMadre.length - itemsPerPage) {
-      setCurrentIndex(currentIndex + 1);
+    const carouselTrack = carouselTrackRef.current;
+    const itemWidth = carouselTrack.children[0].offsetWidth + 20; // Ancho de cada elemento más el margen
+    const maxScroll = carouselTrack.scrollWidth - carouselTrack.offsetWidth;
+
+    if (carouselTrack.scrollLeft + itemWidth < maxScroll) {
+      carouselTrack.scrollLeft += itemWidth;
+      setCurrentIndex((prevIndex) => prevIndex + ITEMS_PER_SCROLL);
+    } else {
+      carouselTrack.scrollLeft = 0;
+      setCurrentIndex(0);
     }
   };
 
   const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    const carouselTrack = carouselTrackRef.current;
+    const itemWidth = carouselTrack.children[0].offsetWidth + 20; // Ancho de cada elemento más el margen
+
+    if (carouselTrack.scrollLeft > 0) {
+      carouselTrack.scrollLeft -= itemWidth;
+      setCurrentIndex((prevIndex) => prevIndex - ITEMS_PER_SCROLL);
+    } else {
+      carouselTrack.scrollLeft = carouselTrack.scrollWidth - carouselTrack.offsetWidth;
+      setCurrentIndex(Math.floor((carouselTrack.scrollWidth - carouselTrack.offsetWidth) / itemWidth));
     }
   };
 
@@ -105,16 +103,12 @@ const Index = () => {
             </div>
             <div className="medio">
               <div className="btn-group">
-                {token && !user?.miembro && (
-                  <button className="join-btn" onClick={handleJoinWorky}>
-                    Únete a Worky
-                  </button>
-                )}
-                {token && user?.miembro && (
-                  <a href="/crear-servicio">
-                    <button className="create-service-button">Crear Servicio</button>
-                  </a>
-                )}
+                <button className="join-btn">
+                  Únete a Worky
+                </button>
+                <a href="/crear-servicio">
+                  <button className="create-service-button">Crear Servicio</button>
+                </a>
               </div>
             </div>
           </div>
@@ -125,15 +119,22 @@ const Index = () => {
       <section className="popular-services-carousel-container">
         <h3>Servicios populares</h3>
         <div className="custom-carousel">
-          <button className="custom-carousel-btn custom-left-btn" onClick={handlePrev}>
+          <button
+            className="custom-carousel-btn custom-left-btn"
+            onClick={handlePrev}
+          >
             {"<"}
           </button>
-          <div
-            className="custom-carousel-track"
-            style={{ transform: `translateX(-${currentIndex * 210}px)` }}
-          >
-            {categoriasMadre.slice(currentIndex, currentIndex + itemsPerPage).map((categoria) => (
-              <div className="custom-carousel-item" key={categoria.id}>
+          <div className="custom-carousel-track" ref={carouselTrackRef}>
+            {categoriasMadre.map((categoria, index) => (
+              <div
+                className="custom-carousel-item"
+                key={categoria.id}
+                style={{
+                  transform: `translateX(-${(currentIndex * ITEMS_PER_SCROLL + index) * 100 / categoriasMadre.length}%)`,
+                  transition: 'transform 0.3s ease-in-out'
+                }}
+              >
                 <img
                   src={imagenesCategoria[categoria.nombre] || 'ruta/a/imagen/default.png'}
                   alt={categoria.nombre}
@@ -142,7 +143,10 @@ const Index = () => {
               </div>
             ))}
           </div>
-          <button className="custom-carousel-btn custom-right-btn" onClick={handleNext}>
+          <button
+            className="custom-carousel-btn custom-right-btn"
+            onClick={handleNext}
+          >
             {">"}
           </button>
         </div>
