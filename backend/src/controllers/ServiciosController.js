@@ -201,17 +201,20 @@ router.get("/Turnos/:id", async (req, res) => {
 router.post("/Turnos/:id/reservar", authMiddleware, async (req, res) => {
     const idTurno = req.params.id;
     const fechaReserva = req.body.fechaReserva; 
-    const  idUsuario = req.user.id
-    console.log(idUsuario + "aaaaaaaa");
+    const id = req.body.id; 
+    const idUsuario = req.user.id;
     try {
-        const result = await servicioService.crearReserva(idTurno, fechaReserva,idUsuario);
+        const idCreadorServicio = await servicioService.obtenerIdCreadorServicio(id);
+        if (idCreadorServicio === idUsuario) {
+            return res.status(400).json({ error: 'No puedes reservar un turno para el servicio que creaste.' });
+        }
+        const result = await servicioService.crearReserva(idTurno, fechaReserva, idUsuario);
         res.status(200).json({ result });
     } catch (error) {
         console.error('Error al crear reserva:', error);
         res.status(500).json({ error: error.message });
     }
 });
-
 router.get("/TurnosReservados/:id", async (req, res) => {
     const idTurno = req.params.id;
     const fecha = req.query.Fecha;

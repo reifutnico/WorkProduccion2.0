@@ -102,3 +102,11 @@ p {
     font-family: 'Arial', sans-serif;
     font-size: 0.875rem; /* Tamaño de fuente más pequeño */
 }
+
+.fecha-con-disponibilidad {
+    background-color: #a1d6a1; /* Un color de fondo para resaltar los días con disponibilidad */
+    border-radius: 50%;
+}
+.available-date {
+    background-color: lightblue;
+  }

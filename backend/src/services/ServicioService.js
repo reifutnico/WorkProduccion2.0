@@ -98,7 +98,13 @@ export default class ServicioService {
         }
     }
     
-     
+    async obtenerIdCreadorServicio(id){
+        try {
+            return await servicioRepository.obtenerIdCreadorServicio(id);
+        } catch (error) {
+           throw new Error('Error al en el estado');
+        }
+    }
     async obtenerPendientes(idUsuario)
     {
         try {

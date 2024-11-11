@@ -481,7 +481,31 @@ export default class ServicioRepository {
             pool.close();
         }
     }
+    async obtenerIdCreadorServicio(idServicio) {
+        const pool = await getConnection();
+        const request = pool.request();
+        try {
+            const query = `
+                SELECT IdCreador FROM Servicios WHERE Id = @idServicio
+            `;
+            request.input('idServicio', sql.Int, idServicio);
+            
+            const result = await request.query(query);
+            if (result.recordset.length > 0) {
+                return result.recordset[0].IdCreador;  // Devuelve el IdCreador
+            } else {
+                throw new Error("Servicio no encontrado");
+            }
+        } catch (error) {
+            console.error('Error al obtener el creador del servicio:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+    
 
+    
     async ObtenerServiciosContratados(idUsuario) {
         try {
             const pool = await getConnection();
