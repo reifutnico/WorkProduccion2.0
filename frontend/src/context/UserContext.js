@@ -49,8 +49,33 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem('user');
     };
 
+    const joinWorky = async () => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/Servicio/miembro',
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            if (response.status === 200) {
+                const updatedUser = { ...user, miembro: true };
+                setUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error al unirse a Worky:', error);
+            throw new Error('Failed to join Worky');
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ user, token, login, logout }}>
+        <UserContext.Provider value={{ user, token, login, logout, joinWorky }}>
             {children}
         </UserContext.Provider>
     );
