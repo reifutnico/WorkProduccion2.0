@@ -27,16 +27,40 @@
     visibility: visible;
   }
   
-  .modal-content {
-
-    border-radius: var(--modal-border-radius);
-    max-width: 400px;
-    width: 90%;
-    box-shadow: var(--modal-shadow);
-    transform: scale(0.9);
-    opacity: 0;
-    transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
+  ..modal-content button.aceptar-btn {
+    background-color: #28a745; /* Verde */
+    color: white;
   }
+  
+  .modal-content button.aceptar-btn:hover {
+    background-color: #218838;
+  }
+  
+  .modal-content button.rechazar-btn {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+  }
+  
+  .modal-content button.rechazar-btn:hover {
+    background-color: #c82333;
+  }
+  
+  .modal-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .modal-item {
+    margin-bottom: 1rem;
+  }
+  
+  .modal-content .buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  
   
   .modal-overlay.show .modal-content {
     transform: scale(1);

@@ -199,51 +199,54 @@ const Navbar = () => {
       </Modal>
 
       <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
-        <div className="notifications-content">
-          {data.length === 0 ? (
-            <p>No tienes turnos reservados.</p>
-          ) : (
-            data.map((turnoReservado, index) => {
-              const fechaObj = new Date(turnoReservado.fecha);
-              fechaObj.setHours(fechaObj.getHours() + 3);
+  <div className="notifications-content">
+    {data.length === 0 ? (
+      <p>No tienes turnos reservados.</p>
+    ) : (
+      data.map((turnoReservado, index) => {
+        const fechaObj = new Date(turnoReservado.fecha);
+        fechaObj.setHours(fechaObj.getHours() + 3);
 
-              const comienzoObj = new Date(turnoReservado.comienzo);
-              comienzoObj.setHours(comienzoObj.getHours() + 3);
+        const comienzoObj = new Date(turnoReservado.comienzo);
+        comienzoObj.setHours(comienzoObj.getHours() + 3);
 
-              const finalObj = new Date(turnoReservado.final);
-              finalObj.setHours(finalObj.getHours() + 3);
+        const finalObj = new Date(turnoReservado.final);
+        finalObj.setHours(finalObj.getHours() + 3);
 
-              const fecha = format(fechaObj, 'dd/MM/yyyy');
-              const formatHourMinute = (date) => {
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                return `${hours}:${minutes}`;
-              };
-              const comienzo = formatHourMinute(comienzoObj);
-              const final = formatHourMinute(finalObj);
+        const fecha = format(fechaObj, 'dd/MM/yyyy');
+        const formatHourMinute = (date) => {
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          return `${hours}:${minutes}`;
+        };
+        const comienzo = formatHourMinute(comienzoObj);
+        const final = formatHourMinute(finalObj);
 
-              return (
-                <div key={index} className="turno-item">
-                  <h3 className="turno-title">Turno a confirmar</h3>
-                  <div className="modal-items">
-                    <div className="modal-item">
-                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
-                      <p><strong>Fecha:</strong> {fecha}</p>
-                    </div>
-                    <div className="modal-item">
-                      <p><strong>Comienzo:</strong> {comienzo}</p>
-                      <p><strong>Final:</strong> {final}</p>
-                    </div>
-                    <button onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
-                    <button onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
-                  </div>
-                  <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>Ver detalles</button>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </ModalNotificaciones>
+        return (
+          <div key={index} className="turno-item">
+            <h3 className="turno-title">Turno a confirmar</h3>
+            <div className="modal-items">
+              <div className="modal-item">
+                <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
+                <p><strong>Fecha:</strong> {fecha}</p>
+              </div>
+              <div className="modal-item">
+                <p><strong>Comienzo:</strong> {comienzo}</p>
+                <p><strong>Final:</strong> {final}</p>
+              </div>
+              {/* Botones Aceptar y Rechazar debajo de la información */}
+              <div className="buttons-container">
+                <button className="aceptar-btn" onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
+                <button className="rechazar-btn" onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
+              </div>
+            </div>
+            <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>Ver detalles</button>
+          </div>
+        );
+      })
+    )}
+  </div>
+</ModalNotificaciones>
     </nav>
   );
 };
