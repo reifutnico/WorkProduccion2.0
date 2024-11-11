@@ -11,23 +11,28 @@ import plomeriaImg from '../img/plomeria.jpg';
 import programadorImg from '../img/programador.jpg';
 
 const imagenesCategoria = {
-  Plomeria: plomeriaImg,       // Cambiado a "Plomeria" para coincidir con la categoría
-  Artista: artistaImg,         // Mantener como "Artista"
-  Gasistas: gasistasImg,       // Cambiado a "Gasistas" para coincidir con la categoría
-  Entrenador: entrenadorImg,   // Mantener como "Entrenador"
-  Programador: programadorImg  // Mantener como "Programador"
+  Plomeria: plomeriaImg,
+  Artista: artistaImg,
+  Gasistas: gasistasImg,
+  Entrenador: entrenadorImg,
+  Programador: programadorImg
 };
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [modo, setModo] = useState("Nombre");
   const [categoriasMadre, setCategoriasMadre] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0); // Índice para controlar el desplazamiento
+  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
-  const itemsPerPage = 3; // Cantidad de categorías visibles al mismo tiempo
-  const { token } = useContext(UserContext);
+  const itemsPerPage = 3;
+  const { token, user, joinWorky } = useContext(UserContext);
 
-  // Obtener categorías madre para el carrusel
+  useEffect(() => {
+    if (user) {
+      console.log(user.miembro);
+    }
+  }, [user]);
+
   useEffect(() => {
     const fetchCategoriasMadre = async () => {
       try {
@@ -40,7 +45,17 @@ const Index = () => {
     fetchCategoriasMadre();
   }, []);
 
-  // Función para manejar el cambio de categorías visibles al presionar las flechas
+  const handleJoinWorky = async () => {
+    try {
+      const success = await joinWorky();
+      if (success) {
+        alert('Bienvenido a workyyyy');
+      }
+    } catch (error) {
+      alert('Hubo un error al unirse a Worky. Por favor, intente nuevamente.');
+    }
+  };
+
   const handleNext = () => {
     if (currentIndex < categoriasMadre.length - itemsPerPage) {
       setCurrentIndex(currentIndex + 1);
@@ -90,8 +105,12 @@ const Index = () => {
             </div>
             <div className="medio">
               <div className="btn-group">
-                <button className="join-btn">Únete a Worky</button>
-                {token && (
+                {token && !user?.miembro && (
+                  <button className="join-btn" onClick={handleJoinWorky}>
+                    Únete a Worky
+                  </button>
+                )}
+                {token && user?.miembro && (
                   <a href="/crear-servicio">
                     <button className="create-service-button">Crear Servicio</button>
                   </a>
@@ -103,7 +122,6 @@ const Index = () => {
         <img src={trabajadorImg} alt="imagen_trabajador" className="img-container" />
       </div>
 
-      {/* Contenedor para el carrusel */}
       <section className="popular-services-carousel-container">
         <h3>Servicios populares</h3>
         <div className="custom-carousel">

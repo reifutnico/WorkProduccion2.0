@@ -7,6 +7,17 @@ const router = express.Router();
 const servicioService = new ServicioService();
 import authMiddleware from "../../auth/authMiddleware.js";
 
+router.post("/miembro", authMiddleware, async (req, res) => {
+    const idUsuario = req.user.id;
+    console.log(idUsuario);
+    try {
+        const serMienbro = await servicioService.serMiembro(idUsuario);
+        res.status(200).json(serMienbro);
+    } catch (error) {
+        console.error('Error al obtener servicios contratados:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 router.get('/turnoReservado/:turnoReservadoId', authMiddleware, async (req, res) => {
@@ -241,7 +252,6 @@ router.get("/contratados", authMiddleware, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
 
 
 

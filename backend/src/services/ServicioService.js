@@ -8,7 +8,13 @@ export default class ServicioService {
             throw new Error('Error al obtener los servicios');
         }
     }
-
+    async serMiembro(idUsuario) {
+        try {
+            return await servicioRepository.serMiembro(idUsuario);
+        } catch (error) {
+           throw new Error('Error al cambiar estado');
+        }
+    }
     async borrarServicio(id, id_creator_user) {
         try {
             await servicioRepository.BorrarServicio(id, id_creator_user);
@@ -141,6 +147,7 @@ export default class ServicioService {
         }
     }
     
+
 
 
     

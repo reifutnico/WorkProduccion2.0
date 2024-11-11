@@ -461,6 +461,27 @@ export default class ServicioRepository {
         }
     }
 
+    async serMiembro(idUsuario) {
+        const pool = await getConnection();
+        const request = pool.request();
+        try {
+            const query = `
+            UPDATE Usuarios
+            SET miembro = 1
+            WHERE id = @idUsuario
+        `;
+        
+            request.input('idUsuario', sql.Int, idUsuario);
+            const result = await request.query(query);
+            return result.recordset;
+        } catch (error) {
+            console.error('Error al obtener reservas:', error.stack);
+            throw error;
+        } finally {
+            pool.close();
+        }
+    }
+
     async ObtenerServiciosContratados(idUsuario) {
         try {
             const pool = await getConnection();
