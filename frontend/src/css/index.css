@@ -173,7 +173,6 @@ h3 {
   color: #ffcc00;
   font-weight: bold;
   position: absolute;
-  z-index: 10000;
   transition: none;
   width: auto;
 }

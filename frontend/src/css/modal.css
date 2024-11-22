@@ -27,21 +27,21 @@
     visibility: visible;
   }
   
-  ..modal-content button.aceptar-btn {
+  .modal-content2 button.aceptar-btn {
     background-color: #28a745; /* Verde */
     color: white;
   }
   
-  .modal-content button.aceptar-btn:hover {
+  .modal-content2 button.aceptar-btn:hover {
     background-color: #218838;
   }
   
-  .modal-content button.rechazar-btn {
+  .modal-content2 button.rechazar-btn {
     background-color: #dc3545; /* Rojo */
     color: white;
   }
   
-  .modal-content button.rechazar-btn:hover {
+  .modal-content2 button.rechazar-btn:hover {
     background-color: #c82333;
   }
   
@@ -55,7 +55,7 @@
     margin-bottom: 1rem;
   }
   
-  .modal-content .buttons-container {
+  .modal-content2 .buttons-container {
     display: flex;
     justify-content: space-between;
     margin-top: 1rem;
@@ -67,7 +67,7 @@
     opacity: 1;
   }
   
-  .modal-content button {
+  .modal-content2 button {
     margin-top: 1.5rem;
     background-color: var(--button-bg);
     color: white;
@@ -78,12 +78,12 @@
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
   
-  .modal-content button:hover {
+  .modal-content2 button:hover {
     background-color: var(--button-hover-bg);
     transform: translateY(-1px);
   }
   
-  .modal-content button:active {
+  .modal-content2 button:active {
     transform: translateY(1px);
   }
   

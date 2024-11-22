@@ -16,6 +16,18 @@
   width: 80%;
   max-width: 500px;
   text-align: center;
+
+}
+
+
+.modal-content2 {
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+  background-color: #ffffff;
+
 }
 
 .modal-close {
@@ -26,6 +38,7 @@
   border: none;
   font-size: 18px;
   cursor: pointer;
+  
 }
 
 /* Nueva clase para alinear los items uno al lado del otro */
