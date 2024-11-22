@@ -14,6 +14,7 @@ import { UserProvider} from './context/UserContext';
 import TurnoReservadoInfo from './componentes/TurnoReservadoInfo.js';
 import ServicesPage from './componentes/ServicesPages.js'
 import ServiciosContratados from './componentes/ServiciosContratados.js';
+import PerfilUsuario from './componentes/PerfilUsuario.js';
 
 const AppRouter = () => (
   <UserProvider>
@@ -32,6 +33,7 @@ const AppRouter = () => (
       <Route path="/ServicesPages" element={<ServicesPage />} />
       <Route path="/turnoReservadoInfo/:turnoReservadoId" element={<TurnoReservadoInfo />} />
       <Route path="/ServiciosContratados" element={<ServiciosContratados />} />
+      <Route path="/PerfilUsuario" element={<PerfilUsuario />} />
     </Routes>
   </Router>
   </UserProvider>

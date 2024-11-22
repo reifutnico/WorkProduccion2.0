@@ -1,5 +1,5 @@
 
-import { query } from "express";
+import { query, response } from "express";
 
 import AccountRepository from "../repositories/account-repository.js";
 import login from "../../auth/login.js";
@@ -74,4 +74,9 @@ export default class AccountServices {
           const result = await AccountRepositories.confirmUser(email);
           return result;
       }
+
+        async getUserProfile(id) {
+          const response = await AccountRepositories.getUserProfile(id);
+          return response;
+        }
 }

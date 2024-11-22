@@ -160,4 +160,18 @@ export default class AccountRepository {
             throw error;
         }
     }
+        async getUserProfile(id) {
+            const pool = await getConnection();
+            const request = await pool.request();
+            const sqlQuery = 'SELECT * FROM Usuarios WHERE id = @id';
+            request.input('id', sql.Int, id);
+            
+            try {
+                const { recordset } = await request.query(sqlQuery);
+                return recordset.length > 0 ? recordset[0] : null;
+            } catch (error) {
+                console.log('Error in getUser:', error);
+                throw error;
+            }
+        }
 }
