@@ -102,7 +102,7 @@ const Navbar = () => {
     // Lógica para manejar la opción seleccionada en el menú
     switch (option) {
       case 'perfil':
-        navigate('/perfil');
+        navigate('/PerfilUsuario');
         break;
       case 'servicios':
         navigate('/ServiciosContratados');

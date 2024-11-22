@@ -7,6 +7,38 @@ import jwt from 'jsonwebtoken';
 import authMiddleware from "../../auth/authMiddleware.js";
 
 const AccountSrv  = new AccountServices();
+router.get("/profile",authMiddleware, async (req, res) => {
+    const id = req.user.id; 
+    console.log(id);
+    try {
+        if (!id || isNaN(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid user ID",
+            });
+        }
+
+        const userProfile = await AccountSrv.getUserProfile(id);
+
+        if (!userProfile) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: userProfile,
+        });
+    } catch (error) {
+        console.error("Error in /profile/:id:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching user profile",
+        });
+    }
+});
 
 router.put("/convertirMiembro", authMiddleware, async (req, response) => {
     const idUsuario = req.user.id; // Asegúrate de que req.user.id existe y tiene un valor válido.
@@ -184,6 +216,7 @@ router.post("/register", async (request, response) => {
         return response.status(500).json({ error: "Server error" });
     }
 });
+
 
 
 
