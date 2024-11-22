@@ -97,12 +97,11 @@ const Index = () => {
     }
   };
 
-  // Maneja el clic para unirse a Worky
   const handleJoinWorky = async () => {
     try {
-      const result = await joinWorky(); // Llama a la función joinWorky desde el contexto
+      const result = await joinWorky(); 
       if (result) {
-        setIsMember(true); // Si se unió correctamente, actualiza el estado de isMember
+        setIsMember(true);
       }
     } catch (error) {
       console.error('Error al unirse a Worky:', error);
@@ -185,7 +184,6 @@ const Index = () => {
             {">"}
           </button>
         </div>
-        <a href="/categorias" className="view-all-categories">Ver todas las categorías</a>
       </section>
     </div>
   );

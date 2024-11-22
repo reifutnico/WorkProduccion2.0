@@ -16,7 +16,10 @@ h2 {
     font-family: 'Arial', sans-serif;
     font-size: 1.25rem; /* Tamaño de fuente moderado */
 }
-
+.dia-disponible {
+    background-color: #90ee90; /* Verde claro */
+    border-radius: 50%;
+}
 .react-calendar {
     width: 100%;
     border: none; /* Sin borde para un diseño más limpio */

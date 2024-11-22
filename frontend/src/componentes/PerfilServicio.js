@@ -65,18 +65,47 @@
         return { disponibilidad, reservas, loading, error, setDisponibilidad };
     };
 
+
     const PerfilServicio = () => {
         const { id } = useParams(); 
         const { token } = useContext(UserContext);
         const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
         const [reservasEstado, setReservasEstado] = useState({});
+        const [diasDisponibles, setDiasDisponibles] = useState([]);
         const diaSeleccionado = diasDeLaSemana[fechaSeleccionada.getDay()];
-        const { disponibilidad, reservas, loading, error, setDisponibilidad } = useDisponibilidad(id, diaSeleccionado, fechaSeleccionada);
+        const { disponibilidad, reservas, setDisponibilidad } = useDisponibilidad(id, diaSeleccionado, fechaSeleccionada);
+        const [loading, setLoading] = useState(true);
+        const [error, setError] = useState(null);
         console.log("ID extraída de la URL:", id);
 
         const handleDateChange = (date) => {
             setFechaSeleccionada(date);
         };
+
+        useEffect(() => {
+            const obtenerDiasDisponibles = async () => {
+                try {
+                    setLoading(true);
+                    const response = await axios.get(`http://localhost:5000/Disponibilidad/${id}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+    
+                    const data = response.data;
+                    const dias = data.map((item) => {
+                        const diaIndex = diasDeLaSemana.indexOf(item.Dia);
+                        return { diaIndex, ...item };
+                    });
+    
+                    setDiasDisponibles(dias);
+                } catch (err) {
+                    setError(err.response ? err.response.data.message : err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+    
+            if (id) obtenerDiasDisponibles();
+        }, [id, token]);
 
         const reservarTurno = async (idTurno) => {
             const fechaReserva = fechaSeleccionada.toISOString().split('T')[0]; 
@@ -96,7 +125,6 @@
                 console.log("Reserva creada exitosamente:", response.data);
                 setFechaSeleccionada(new Date(fechaSeleccionada));
             } catch (err) {
-                // Muestra el error en un alert
                 alert(`Error al reservar el turno con ID: ${idTurno}\n${err.response ? err.response.data.error : err.message}`);
             }
         };
@@ -131,6 +159,15 @@
             }
         }, [fechaSeleccionada, disponibilidad]);
 
+        const tileClassName = ({ date, view }) => {
+            if (view === "month") {
+                const diaIndex = date.getDay();
+                const isAvailable = diasDisponibles.some((dia) => dia.diaIndex === diaIndex);
+                return isAvailable ? "dia-disponible" : null;
+            }
+            return null;
+        };
+
         const minDate = new Date(); 
 
         return (
@@ -140,6 +177,7 @@
                     onChange={handleDateChange} 
                     value={fechaSeleccionada} 
                     minDate={minDate}
+                    tileClassName={tileClassName} 
                 />
 
                 <div>
