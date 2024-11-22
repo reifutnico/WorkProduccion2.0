@@ -1,15 +1,14 @@
-import React, { useState,useContext  } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
-import axios from 'axios';
 import '../css/Login.css';
-
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const { login } = useContext(UserContext);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -32,6 +31,7 @@ function Login() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        className="form-input"
                     />
                     <input
                         type="password"
@@ -39,8 +39,11 @@ function Login() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className="form-input"
                     />
-                    <button type="submit">Log In</button>
+                    <button type="submit" className="form-button">
+                        Log In
+                    </button>
                 </form>
                 <p>
                     Don't have an account? <Link to="/register">Sign Up</Link>

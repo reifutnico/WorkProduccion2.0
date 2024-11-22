@@ -147,9 +147,9 @@ const Navbar = () => {
           <>
             <div
               className={`notification-bell ${hasData ? 'red' : ''}`}
-              onClick={handleNot}
-            >
-              <FaBell size={24} /> <p>{data.length}</p>
+              onClick={handleNot}>
+              <FaBell size={24} />
+              {data.length > 0 && <p>{data.length}</p>}
             </div>
             <button className="logout-btn" onClick={handleLogout}>
               Cerrar sesión

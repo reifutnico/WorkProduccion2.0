@@ -15,6 +15,13 @@ body {
   box-sizing: border-box;
 }
 
+.main-content-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 3rem;
+}
+
 .main-content {
   display: flex;
   flex-direction: column;
@@ -24,6 +31,11 @@ body {
 
 .arriba {
   margin-top: 0.5rem;
+  color: #111;
+}
+
+.main-arriba{
+  color: #111;
 }
 
 .medio {
