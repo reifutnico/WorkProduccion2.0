@@ -221,7 +221,7 @@ const Horario = () => {
           ))}
         </select>
       </div>
-      <button onClick={newDisponibilidad}>Confirmar</button>
+      <button className='horario' onClick={newDisponibilidad}>Confirmar</button>
       <div className="schedule-list">
       <h2>Horarios seleccionados:</h2>
       {Array.isArray(schedule) && schedule.length > 0 ? (
@@ -238,7 +238,7 @@ const Horario = () => {
         <p>No hay horarios seleccionados.</p>
       )}
     </div>
-    <button onClick={NextPage}>Finalizar</button>
+    <button className='horario' onClick={NextPage}>Finalizar</button>
   </div>
 );
 };

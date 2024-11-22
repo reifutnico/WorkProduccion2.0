@@ -219,7 +219,7 @@ const Navbar = () => {
                     </div>
                     <div className="buttons-container">
                       <button className="aceptar-btn" onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
-                      <button className="rechazar-btn" onClick={() => confirmarTurno(0, turnoReservado.idTurno)}>Rechazar</button>
+                      <button className="rechazar-btn" onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
                     </div>
                   </div>
                 </div>
