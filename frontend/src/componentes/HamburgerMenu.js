@@ -4,28 +4,31 @@ const HamburgerMenu = ({ isMenuOpen, toggleMenu, handleMenuOptionClick }) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    // Detecta los clics fuera del menú
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        toggleMenu(false); // Cierra el menú si el clic es fuera del menú
+      // Si el menú está abierto y el clic fue fuera del menú
+      if (isMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
+        // Verificamos que el clic no sea en el botón de hamburguesa
+        const hamburgerButton = document.querySelector('.hamburger-icon');
+        if (!hamburgerButton.contains(event.target)) {
+          toggleMenu(false);
+        }
       }
     };
 
-    // Añadir el evento al document
+    // Agregamos el event listener cuando el componente se monta
     document.addEventListener('mousedown', handleClickOutside);
 
-    // Eliminar el evento cuando el componente se desmonte
+    // Limpiamos el event listener cuando el componente se desmonta
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [toggleMenu]);
+  }, [isMenuOpen, toggleMenu]);
 
   return (
     <>
-      {/* Menú hamburguesa */}
-      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`} ref={menuRef}>
-        <span className="close-menu" onClick={() => toggleMenu(false)}>X</span>
-        <div className="menu-content">
+      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
+        <div ref={menuRef} className="menu-content">
+          <span className="close-menu" onClick={() => toggleMenu(false)}>X</span>
           <div className="menu-item" onClick={() => handleMenuOptionClick('perfil')}>
             <span>Mi Perfil</span>
             <i className="menu-icon profile-icon"></i>
