@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import Login from './login';
 import { UserContext } from '../context/UserContext';
 import { FaBell } from 'react-icons/fa';
+import HamburgerMenu from './HamburgerMenu'; // Importa el componente del menú hamburguesa
 
 const Navbar = () => {
   const [dropdown, setDropdown] = useState(null);
@@ -97,33 +98,27 @@ const Navbar = () => {
       console.error('Error al buscar servicios:', error);
     }
   };
-
+  const handleMenuOptionClick = (option) => {
+    // Lógica para manejar la opción seleccionada en el menú
+    switch (option) {
+      case 'perfil':
+        navigate('/perfil');
+        break;
+      case 'servicios':
+        navigate('/ServiciosContratados');
+        break;
+      case 'mis-servicios':
+        navigate('/ServicesPages ');
+        break;
+      default:
+        break;
+    }
+  };
+  
   const handleNot = async () => {
     if (token) {
       await fetchData();
       setNotificationsOpen(true);
-    }
-  };
-
-  const handleMenuOptionClick = (option) => {
-    if (token) {
-      switch (option) {
-        case 'perfil':
-          navigate('/perfil-servicio'); // Cambia la ruta a la de tu página de perfil
-          break;
-        case 'servicios':
-          navigate('/ServiciosContratados'); // Cambia la ruta a la de tu página de servicios contratados
-          break;
-        case 'mis-servicios':
-          navigate('/ServicesPages'); // Cambia la ruta a la de "Mis Servicios"
-          break;
-        default:
-          break;
-      }
-      setMenuOpen(false);
-    } else {
-      setLoginOpen(true);
-      setMenuOpen(false);
     }
   };
 
@@ -175,78 +170,64 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Menú hamburguesa */}
-      <div className={`menu-overlay ${isMenuOpen ? 'open' : ''}`}>
-        <span className="close-menu" onClick={() => setMenuOpen(false)}>X</span>
-        <div className="menu-content">
-          <div className="menu-item" onClick={() => handleMenuOptionClick('perfil')}>
-            <span>Mi Perfil</span>
-            <i className="menu-icon profile-icon"></i>
-          </div>
-          <div className="menu-item" onClick={() => handleMenuOptionClick('servicios')}>
-            <span>Servicios Contratados</span>
-            <i className="menu-icon services-icon"></i>
-          </div>
-          <div className="menu-item" onClick={() => handleMenuOptionClick('mis-servicios')}>
-            <span>Mis Servicios</span>
-            <i className="menu-icon mis-servicios-icon"></i>
-          </div>
-        </div>
-      </div>
+      {/* Usando el menú hamburguesa como componente */}
+      <HamburgerMenu
+        isMenuOpen={isMenuOpen}
+        toggleMenu={toggleMenu}
+        handleMenuOptionClick={(option) => handleMenuOptionClick(option)}
+      />
 
       <Modal isOpen={isLoginOpen} onClose={() => setLoginOpen(false)} title="Log In">
         <Login />
       </Modal>
 
       <ModalNotificaciones isOpen={isNotificationsOpen} onClose={() => setNotificationsOpen(false)} title="Notificaciones">
-  <div className="notifications-content">
-    {data.length === 0 ? (
-      <p>No tienes turnos reservados.</p>
-    ) : (
-      data.map((turnoReservado, index) => {
-        const fechaObj = new Date(turnoReservado.fecha);
-        fechaObj.setHours(fechaObj.getHours() + 3);
+        <div className="notifications-content">
+          {data.length === 0 ? (
+            <p>No tienes turnos reservados.</p>
+          ) : (
+            data.map((turnoReservado, index) => {
+              const fechaObj = new Date(turnoReservado.fecha);
+              fechaObj.setHours(fechaObj.getHours() + 3);
 
-        const comienzoObj = new Date(turnoReservado.comienzo);
-        comienzoObj.setHours(comienzoObj.getHours() + 3);
+              const comienzoObj = new Date(turnoReservado.comienzo);
+              comienzoObj.setHours(comienzoObj.getHours() + 3);
 
-        const finalObj = new Date(turnoReservado.final);
-        finalObj.setHours(finalObj.getHours() + 3);
+              const finalObj = new Date(turnoReservado.final);
+              finalObj.setHours(finalObj.getHours() + 3);
 
-        const fecha = format(fechaObj, 'dd/MM/yyyy');
-        const formatHourMinute = (date) => {
-          const hours = String(date.getHours()).padStart(2, '0');
-          const minutes = String(date.getMinutes()).padStart(2, '0');
-          return `${hours}:${minutes}`;
-        };
-        const comienzo = formatHourMinute(comienzoObj);
-        const final = formatHourMinute(finalObj);
+              const fecha = format(fechaObj, 'dd/MM/yyyy');
+              const formatHourMinute = (date) => {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+              };
+              const comienzo = formatHourMinute(comienzoObj);
+              const final = formatHourMinute(finalObj);
 
-        return (
-          <div key={index} className="turno-item">
-            <h3 className="turno-title">Turno a confirmar</h3>
-            <div className="modal-items">
-              <div className="modal-item">
-                <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
-                <p><strong>Fecha:</strong> {fecha}</p>
-              </div>
-              <div className="modal-item">
-                <p><strong>Comienzo:</strong> {comienzo}</p>
-                <p><strong>Final:</strong> {final}</p>
-              </div>
-              {/* Botones Aceptar y Rechazar debajo de la información */}
-              <div className="buttons-container">
-                <button className="aceptar-btn" onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
-                <button className="rechazar-btn" onClick={() => confirmarTurno(2, turnoReservado.idTurno)}>Rechazar</button>
-              </div>
-            </div>
-            <button onClick={() => navigate(`/turnoReservadoInfo/${turnoReservado.idTurno}`)}>Ver detalles</button>
-          </div>
-        );
-      })
-    )}
-  </div>
-</ModalNotificaciones>
+              return (
+                <div key={index} className="turno-item">
+                  <h3 className="turno-title">Turno a confirmar</h3>
+                  <div className="modal-items">
+                    <div className="modal-item">
+                      <p><strong>Servicio:</strong> {turnoReservado.Nombre}</p>
+                      <p><strong>Fecha:</strong> {fecha}</p>
+                    </div>
+                    <div className="modal-item">
+                      <p><strong>Comienzo:</strong> {comienzo}</p>
+                      <p><strong>Final:</strong> {final}</p>
+                    </div>
+                    <div className="buttons-container">
+                      <button className="aceptar-btn" onClick={() => confirmarTurno(1, turnoReservado.idTurno)}>Aceptar</button>
+                      <button className="rechazar-btn" onClick={() => confirmarTurno(0, turnoReservado.idTurno)}>Rechazar</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </ModalNotificaciones>
     </nav>
   );
 };
