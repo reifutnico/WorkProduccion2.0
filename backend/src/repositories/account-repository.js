@@ -17,7 +17,47 @@ export default class AccountRepository {
             throw error;
         }
     }
+    
+    async getMember(id) {
+        const pool = await getConnection();
+        const request = await pool.request();
+        const sqlQuery = 'SELECT miembro FROM Usuarios WHERE id = @id';
+        request.input('id', sql.Int, id);
+    
+        try {
+            const { recordset } = await request.query(sqlQuery);
+            return recordset.length > 0 ? recordset[0] : null;
+        } catch (error) {
+            console.error('Error in getMember:', error); // Usa console.error para errores
+            throw new Error('Failed to retrieve member'); // Lanza un error más descriptivo
+        } finally {
+            if (pool) pool.close(); // Asegúrate de cerrar la conexión
+        }
+    }
 
+    async convertirMiembro(id) {
+        const pool = await getConnection();
+        const request = pool.request();
+        const sqlQuery = `
+            UPDATE Usuarios
+            SET miembro = 1
+            OUTPUT inserted.*
+            WHERE id = @id;
+        `;
+        request.input('id', sql.Int, id);
+    
+        try {
+            const result = await request.query(sqlQuery);
+            const recordset = result.recordset || [];
+            return recordset.length > 0 ? recordset[0] : null;
+        } catch (error) {
+            console.error("Error en convertirMiembro:", error.message);
+            throw new Error("Error al actualizar el estado de miembro.");
+        } finally {
+            if (pool) await pool.close(); // Asegúrate de liberar recursos.
+        }
+    }
+    
     async registerUser(username, email, telefono, fechaNacimiento, hashedPassword) {
         const pool = await getConnection();
         const request = await pool.request();

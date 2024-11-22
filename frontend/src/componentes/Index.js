@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { UserContext } from '../context/UserContext'; // Asegúrate de importar el contexto
 import trabajadorImg from '../img/trabajadorIndex.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -14,18 +15,37 @@ const imagenesCategoria = {
   Artista: artistaImg,
   Gasistas: gasistasImg,
   Entrenador: entrenadorImg,
-  Programador: programadorImg
+  Programador: programadorImg,
 };
 
 const ITEMS_PER_SCROLL = 1; // Avanzar solo un ítem por clic
 
 const Index = () => {
+  const [isMember, setIsMember] = useState(false); // Almacena si es miembro
   const [searchTerm, setSearchTerm] = useState("");
   const [modo, setModo] = useState("Nombre");
   const [categoriasMadre, setCategoriasMadre] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselTrackRef = useRef(null);
+  const { token, verificarMiembro, joinWorky } = useContext(UserContext); // Importa joinWorky
+
   const navigate = useNavigate();
+
+  // Verificar si el usuario es miembro
+  useEffect(() => {
+    const verificarEstadoDeMiembro = async () => {
+      if (token) {
+        try {
+          const result = await verificarMiembro(token);
+          setIsMember(result);
+        } catch (error) {
+          console.error('Error al verificar el estado de miembro:', error);
+        }
+      }
+    };
+
+    verificarEstadoDeMiembro();
+  }, [token, verificarMiembro]);
 
   useEffect(() => {
     const fetchCategoriasMadre = async () => {
@@ -73,7 +93,19 @@ const Index = () => {
       const servicios = response.data;
       navigate('/resultados', { state: { searchTerm, servicios } });
     } catch (error) {
-      console.error("Error al buscar servicios:", error);
+      console.error('Error al buscar servicios:', error);
+    }
+  };
+
+  // Maneja el clic para unirse a Worky
+  const handleJoinWorky = async () => {
+    try {
+      const result = await joinWorky(); // Llama a la función joinWorky desde el contexto
+      if (result) {
+        setIsMember(true); // Si se unió correctamente, actualiza el estado de isMember
+      }
+    } catch (error) {
+      console.error('Error al unirse a Worky:', error);
     }
   };
 
@@ -103,12 +135,15 @@ const Index = () => {
             </div>
             <div className="medio">
               <div className="btn-group">
-                <button className="join-btn">
-                  Únete a Worky
-                </button>
-                <a href="/crear-servicio">
-                  <button className="create-service-button">Crear Servicio</button>
-                </a>
+                {token && (
+                  isMember ? (
+                    <a href="/crear-servicio">
+                      <button className="create-service-button">Crear Servicio</button>
+                    </a>
+                  ) : (
+                    <button className="join-btn" onClick={handleJoinWorky}>Únete a Worky</button>
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -132,7 +167,7 @@ const Index = () => {
                 key={categoria.id}
                 style={{
                   transform: `translateX(-${(currentIndex * ITEMS_PER_SCROLL + index) * 100 / categoriasMadre.length}%)`,
-                  transition: 'transform 0.3s ease-in-out'
+                  transition: 'transform 0.3s ease-in-out',
                 }}
               >
                 <img

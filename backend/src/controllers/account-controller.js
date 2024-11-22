@@ -4,8 +4,39 @@ import nodemailer from 'nodemailer';
 import AccountServices from "../services/account-services.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import authMiddleware from "../../auth/authMiddleware.js";
 
 const AccountSrv  = new AccountServices();
+
+router.put("/convertirMiembro", authMiddleware, async (req, response) => {
+    const idUsuario = req.user.id; // Asegúrate de que req.user.id existe y tiene un valor válido.
+    try {
+        const result = await AccountSrv.convertirMiembro(idUsuario);
+        if (result) {
+            return response.status(200).json({ success: true, data: result });
+        } else {
+            return response.status(404).json({ success: false, message: "Usuario no encontrado o no actualizado." });
+        }
+    } catch (error) {
+        console.error("Error:", error.message);
+        return response.status(500).json({ success: false, message: "Error al convertir a miembro." });
+    }
+});
+
+  
+
+router.get("/verificarMiembro", authMiddleware,  async (req, response) => { 
+    const idUsuario = req.user.id;
+    try {
+    const bool = await AccountSrv.getMember(idUsuario);
+    return response.status(200).json(bool);
+    } catch (error) {
+    console.error("Error", error);
+    return response.json("Error");    
+}
+  });
+
+
 
 
 router.post("/login", async (request, response) => { 
@@ -31,7 +62,9 @@ router.post("/login", async (request, response) => {
     }
   });
 
-  
+    
+
+
 router.get("/login/token", async (request, response) => { 
     id = request.user.id; 
     try {

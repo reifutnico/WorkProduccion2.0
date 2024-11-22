@@ -6,6 +6,8 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
+    const [miembro, setmiembro] = useState(null);
+    const [convertir, setconvertirMiembro] = useState(null);
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
@@ -41,6 +43,51 @@ export const UserProvider = ({ children }) => {
             throw new Error('Login failed');
         }
     };
+    const verificarMiembro = async (token) => {
+        try {
+            const response = await axios.get(
+                'http://localhost:5000/api/account/verificarMiembro',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+    
+            if (response.status === 200) {
+                const esMiembro = response.data.miembro; 
+                setmiembro(esMiembro);
+                return esMiembro; 
+            }
+        } catch (error) {
+            console.error('Error al verificar si eres miembro:', error);
+            throw new Error('Verification failed');
+        }
+    };
+    
+
+    const convertirMiembro = async (token) => {
+        try {
+            const response = await axios.put(
+                'http://localhost:5000/api/account/convertirMiembro',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (response.status === 200) {
+                const convertirMiembro = response.data.miembro; 
+                setconvertirMiembro(convertirMiembro);
+                return convertir; 
+            }
+        } catch (error) {
+            console.error('Error al verificar si eres miembro:', error);
+            throw new Error('Verification failed');
+        }
+    };
+    
+
 
     const logout = () => {
         setToken(null);
@@ -75,7 +122,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, token, login, logout, joinWorky }}>
+        <UserContext.Provider value={{ user, token, login, logout, joinWorky,verificarMiembro,convertirMiembro}}>
             {children}
         </UserContext.Provider>
     );

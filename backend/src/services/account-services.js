@@ -49,6 +49,18 @@ export default class AccountServices {
       return response;
       }
 
+      
+      async getMember(id)
+      {
+      const response = await AccountRepositories.getMember(id);
+      return response;
+      }
+
+      async convertirMiembro(id)
+      {
+      const response = await AccountRepositories.convertirMiembro(id);
+      return response;
+      }
 
 
       async registerUser(username,email,telefono,fechaNacimiento,hashedPassword)
