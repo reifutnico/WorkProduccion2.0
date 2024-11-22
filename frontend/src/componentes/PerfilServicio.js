@@ -177,7 +177,7 @@
                                             <td>{reservado ? "Reservado" : "Disponible"}</td>
                                             <td>
                                                 {!reservado && (
-                                                    <button onClick={() => reservarTurno(horario.id)}>
+                                                    <button className="reservado" onClick={() => reservarTurno(horario.id)}>
                                                         Reservar    
                                                     </button>
                                                 )}

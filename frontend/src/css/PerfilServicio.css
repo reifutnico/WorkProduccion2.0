@@ -110,3 +110,13 @@ p {
 .available-date {
     background-color: lightblue;
   }
+
+  .reservado
+  {
+    background-color: #94db94;
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+  }
