@@ -112,10 +112,10 @@ const Index = () => {
   return (
     <div>
       <div className="container">
-        <main>
+        <main className='main-content-wrapper'>
           <div className="main-content">
             <div className="arriba">
-              <h2>Encuentra el servicio a mejor precio.</h2>
+              <h2 className='main-arriba'>Encuentra el servicio a mejor precio.</h2>
               <div className="search-bar">
                 <input
                   type="text"

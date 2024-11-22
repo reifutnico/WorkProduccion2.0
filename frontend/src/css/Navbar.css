@@ -191,9 +191,24 @@
 
 .notification-bell {
   position: relative;
-  color: inherit; /* Color por defecto */
+  cursor: pointer;
+  display: inline-block;
 }
 
-.notification-bell.red {
-  color: red; /* Color rojo si hay turnos reservados */
+.notification-bell p {
+  position: absolute;
+  top: -5px; /* Ajusta la posición vertical */
+  right: -15px; /* Mueve más a la derecha */
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 100%; /* Mantiene la forma redonda */
+  padding: 2px 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 22px; /* Incrementa para hacerlo más redondo */
+  width: 22px; /* Incrementa para hacerlo más redondo */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
