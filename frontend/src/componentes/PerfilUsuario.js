@@ -48,8 +48,8 @@ const PerfilUsuario = () => {
                 <h1 className="perfil-titulo">Perfil de Usuario</h1>
             </div>
             <div className="perfil-info">
-                <p><strong>Nombre de usuario:</strong> {userData.username}</p>
-                <p><strong>Email:</strong> {userData.email}</p>
+                <p><strong>Nombre de usuario:</strong> {userData.Nombre}</p>
+                <p><strong>Email:</strong> {userData.mail}</p>
                 <p><strong>Teléfono:</strong> {userData.telefono || "No especificado"}</p>
                 <p><strong>Fecha de nacimiento:</strong> {new Date(userData.fechaNacimiento).toLocaleDateString()}</p>
             </div>
